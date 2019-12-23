@@ -1,7 +1,5 @@
 package application
 
-import "fmt"
-
 type App interface {
 	Init()
 	Run()
@@ -14,6 +12,6 @@ type Application struct {
 
 func (Application) Run() {
 	for x := 0; ; x++ {
-		fmt.Println(x % 2)
+		// fmt.Println(x % 2)
 	}
 }
