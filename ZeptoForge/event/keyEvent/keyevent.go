@@ -1,6 +1,8 @@
 package keyEvent
 
 import (
+	"fmt"
+
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
 )
 
@@ -22,7 +24,7 @@ func (k keyEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryKeyboard, event.EventCategoryInput}
 }
 func (keyEvent) ToString() string {
-	return ""
+	return "KeyEvent: "
 }
 func (keyEvent) IsInCategory(cat event.EventCategory) bool {
 	return false
@@ -49,7 +51,7 @@ func (keyPressedEvent) GetName() string {
 	return "KeyPressed"
 }
 func (kp keyPressedEvent) ToString() string {
-	return "KeyPressedEvent: " + string(kp.event.keyCode) + " ( " + string(kp.repeatCount) + " repeats)"
+	return fmt.Sprintf("KeyPressedEvent: %v (%v repeats)", kp.event.keyCode, kp.repeatCount)
 }
 
 type keyReleasedEvent struct {
@@ -70,5 +72,5 @@ func (kr keyReleasedEvent) GetName() string {
 	return "KeyReleased"
 }
 func (kr keyReleasedEvent) ToString() string {
-	return "KeyReleasedEvent: " + string(kr.event.keyCode)
+	return fmt.Sprintf("KeyReleasedEvent: %v", kr.event.keyCode)
 }

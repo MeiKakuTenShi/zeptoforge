@@ -1,6 +1,8 @@
 package appEvent
 
 import (
+	"fmt"
+
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
 )
 
@@ -31,7 +33,7 @@ func (wr windowResizeEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryApplication}
 }
 func (wr windowResizeEvent) ToString() string {
-	return "WindowResizeEvent: " + string(wr.width) + ", " + string(wr.height)
+	return fmt.Sprintf("WindowResizeEvent: %v, %v", wr.width, wr.height)
 }
 func (wr windowResizeEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(wr.GetCategoryFlags(), e)
@@ -57,7 +59,7 @@ func (wc windowCloseEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryApplication}
 }
 func (wc windowCloseEvent) ToString() string {
-	return "Window Close Event"
+	return "WindowCloseEvent: "
 }
 func (wc windowCloseEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(wc.GetCategoryFlags(), e)
@@ -83,7 +85,7 @@ func (at appTickEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryApplication}
 }
 func (at appTickEvent) ToString() string {
-	return "Window Close Event"
+	return "WindowCloseEvent: "
 }
 func (at appTickEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(at.GetCategoryFlags(), e)
@@ -109,7 +111,7 @@ func (au appUpdateEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryApplication}
 }
 func (au appUpdateEvent) ToString() string {
-	return "Window Update Event"
+	return "WindowUpdateEvent: "
 }
 func (au appUpdateEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(au.GetCategoryFlags(), e)
@@ -135,7 +137,7 @@ func (ar appRenderEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryApplication}
 }
 func (ar appRenderEvent) ToString() string {
-	return "Window Render Event"
+	return "WindowRenderEvent: "
 }
 func (ar appRenderEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(ar.GetCategoryFlags(), e)

@@ -33,7 +33,7 @@ func (mm mouseMovedEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}
 }
 func (mm mouseMovedEvent) ToString() string {
-	return "MouseMovedEvent: " + fmt.Sprintf("%g", mm.mouseX) + ", " + fmt.Sprintf("%g", mm.mouseY)
+	return "MouseMovedEvent: " + fmt.Sprintf("%g, %g", mm.mouseX, mm.mouseY)
 }
 func (mm mouseMovedEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(mm.GetCategoryFlags(), e)
@@ -66,7 +66,7 @@ func (ms mouseScrolledEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}
 }
 func (ms mouseScrolledEvent) ToString() string {
-	return "MouseScrolledEvent: " + fmt.Sprintf("%g", ms.GetXOffset()) + fmt.Sprintf("%g", ms.GetYOffset())
+	return "MouseScrolledEvent: " + fmt.Sprintf("%g, %g", ms.GetXOffset(), ms.GetYOffset())
 }
 func (ms mouseScrolledEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(ms.GetCategoryFlags(), e)
@@ -97,7 +97,7 @@ func (mb mouseButtonEvent) GetCategoryFlags() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}
 }
 func (mouseButtonEvent) ToString() string {
-	return ""
+	return "MouseButtonEvent: "
 }
 func (mb mouseButtonEvent) IsInCategory(e event.EventCategory) bool {
 	return event.Contains(mb.GetCategoryFlags(), e)
@@ -120,7 +120,7 @@ func (mp mouseButtonPressedEvent) GetName() string {
 	return "MouseButtonPressed"
 }
 func (mp mouseButtonPressedEvent) ToString() string {
-	return "MouseButtonPressedEvent: " + string(mp.mouseEvent.button)
+	return fmt.Sprintf("MouseButtonPressedEvent: %v", mp.mouseEvent.button)
 }
 
 type mouseButtonReleasedEvent struct {
@@ -140,5 +140,5 @@ func (mr mouseButtonReleasedEvent) GetName() string {
 	return "MouseButtonReleased"
 }
 func (mr mouseButtonReleasedEvent) ToString() string {
-	return "MouseButtonReleasedEvent: " + string(mr.mouseEvent.button)
+	return fmt.Sprintf("MouseButtonReleasedEvent: %v", mr.mouseEvent.button)
 }

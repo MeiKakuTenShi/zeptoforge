@@ -40,25 +40,29 @@ type eventDispatcher struct {
 	event *Eventum
 }
 type Eventum struct {
-	event     Event
+	eventum   Event
 	handled   bool
 	eventType EventType
 }
+type eventFn struct {
+	event Event
+	fn    func(*Event) bool
+}
 
 func NewEventum(ev Event, e EventType) *Eventum {
-	return &Eventum{event: ev, handled: false, eventType: e}
+	return &Eventum{eventum: ev, handled: false, eventType: e}
 }
 
 func NewEventDispatcher(e *Eventum) eventDispatcher {
 	return eventDispatcher{event: e}
-} /*
-func (ed eventDispatcher) Dispatch() bool {
-	if(ed.event.GetEventType() == *ed.event.EventType) {
-		ed.event.handled = true
+}
+func (ed eventDispatcher) Dispatch(fn eventFn) bool {
+	if ed.event.eventum.GetEventType() == fn.event.GetEventType() {
+		ed.event.handled = fn.fn(&ed.event.eventum)
 		return true
 	}
 	return false
-}*/
+}
 
 var Contains = func(s []EventCategory, e EventCategory) bool {
 	for _, a := range s {

@@ -30,7 +30,8 @@ var (
 		fmt.Print(&core)
 	}
 	ZF_CORE_TRACE = func(msg ...interface{}) {
-
+		coreLog.Printf("CORE_TRACE: %s", msg)
+		fmt.Print(&core)
 	}
 	ZF_CORE_FATAL = func(msg ...interface{}) {
 		coreLog.Fatalf("CORE_FATAL: %s", msg)
