@@ -1,22 +1,25 @@
 package main
 
 import (
+	"runtime"
+
 	"github.com/MeiKakuTenShi/zeptoforge/Sandbox/sandbox"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 )
+
+func init() {
+	runtime.LockOSThread()
+
+}
 
 func main() {
 	// clArgs := os.Args
 	// fmt.Println(clArgs)
 
 	logsys.Init()
-	logsys.ZF_CORE_WARN("Corelog initialized")
-	logsys.ZF_INFO("Clientlog initialized")
-
-	logsys.PrintLog(logsys.Lcore)
-	logsys.PrintLog(logsys.Lclient)
 
 	sb := sandbox.CreateApplication()
+	defer sb.Close()
 	sb.App.Init()
 	sb.Run()
 }

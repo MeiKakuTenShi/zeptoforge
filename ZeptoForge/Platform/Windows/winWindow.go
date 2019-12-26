@@ -2,7 +2,6 @@ package Windows
 
 import (
 	"fmt"
-	"runtime"
 	"unsafe"
 
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
@@ -20,7 +19,7 @@ type winData struct {
 type WinWindow struct {
 	win    window.Window
 	window *glfw.Window
-	data   winData
+	data   *winData
 }
 
 var (
@@ -30,18 +29,23 @@ var (
 	default_height  = 720
 )
 
-func (WinWindow) Create(props *window.WindowProps) *WinWindow {
-	runtime.LockOSThread()
-	result := &WinWindow{}
+func Create(props *window.WindowProps) WinWindow {
+	result := WinWindow{data: &winData{}}
 
 	if props.Title == "" {
 		props.Title = default_title
+	} else {
+
 	}
 	if props.Width == 0 {
 		props.Width = default_width
+	} else {
+
 	}
 	if props.Height == 0 {
 		props.Height = default_height
+	} else {
+
 	}
 
 	result.init(props)
@@ -87,22 +91,21 @@ func (win *WinWindow) init(props *window.WindowProps) {
 
 	logsys.ZF_CORE_INFO(fmt.Sprintf("Creating window %s (%v, %v)", props.Title, props.Width, props.Height))
 
-	var err error
 	if !glfwInitialized {
-		if err = glfw.Init(); err != nil {
+		if err := glfw.Init(); err != nil {
 			logsys.ZF_CORE_ERROR(err)
 		}
+		//defer glfw.Terminate()
 		glfwInitialized = true
-		defer glfw.Terminate()
-
 		glfw.WindowHint(glfw.Resizable, glfw.False)
 	}
 
+	var err error
 	win.window, err = glfw.CreateWindow(props.Width, props.Height, props.Title, nil, nil)
 	if err != nil {
 		logsys.ZF_CORE_ERROR(err)
 	}
 	win.window.MakeContextCurrent()
-	win.window.SetUserPointer(unsafe.Pointer(&win.data))
+	win.window.SetUserPointer(unsafe.Pointer(win.data))
 	win.SetVSync(true)
 }

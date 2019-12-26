@@ -73,9 +73,9 @@ func Init() {
 
 func PrintLog(rec int) {
 	if rec == Lcore {
-		fmt.Println(&core)
+		fmt.Print(&core)
 	} else if rec == Lclient {
-		fmt.Println(&client)
+		fmt.Print(&client)
 	} else {
 		fmt.Printf("LogSystem::PrintMessage(): 'rec' = %v - value undefined", rec)
 	}
