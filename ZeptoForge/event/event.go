@@ -44,24 +44,30 @@ type Eventum struct {
 	handled   bool
 	eventType EventType
 }
-type eventFn struct {
-	event Event
-	fn    func(*Event) bool
+type EventFn struct {
+	Event Event
+	Fn    func(Event) bool
 }
 
 func NewEventum(ev Event, e EventType) *Eventum {
 	return &Eventum{eventum: ev, handled: false, eventType: e}
 }
+func (e *Eventum) GetEvent() Event {
+	return e.eventum
+}
 
 func NewEventDispatcher(e *Eventum) eventDispatcher {
 	return eventDispatcher{event: e}
 }
-func (ed eventDispatcher) Dispatch(fn eventFn) bool {
-	if ed.event.eventum.GetEventType() == fn.event.GetEventType() {
-		ed.event.handled = fn.fn(&ed.event.eventum)
+func (ed eventDispatcher) Dispatch(fn EventFn) bool {
+	if ed.event.eventum.GetEventType() == fn.Event.GetEventType() {
+		ed.event.handled = fn.Fn(ed.event.eventum)
 		return true
 	}
 	return false
+}
+func (e *Eventum) ToString() string {
+	return e.eventum.ToString()
 }
 
 var Contains = func(s []EventCategory, e EventCategory) bool {

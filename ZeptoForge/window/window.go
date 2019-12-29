@@ -15,7 +15,7 @@ func NewWindowProps(title string, width, height int) *WindowProps {
 }
 
 type EventCallBackFn struct {
-	CallbackFn func(event.Eventum)
+	CallbackFn func(*event.Eventum)
 }
 
 type Window interface {

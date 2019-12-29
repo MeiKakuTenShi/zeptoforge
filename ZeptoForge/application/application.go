@@ -2,6 +2,8 @@ package application
 
 import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/Platform/Windows"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/appEvent"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
 )
@@ -9,6 +11,7 @@ import (
 type App interface {
 	Init()
 	Run()
+	OnEvent(*event.Eventum)
 }
 
 type Application struct {
@@ -18,10 +21,11 @@ type Application struct {
 	Name    string
 }
 
-func NewApplication() *Application {
+func NewApplication(app App, name string) *Application {
 	// TODO: make this platform independent
-	win := Windows.Create(window.NewWindowProps("", 0, 0))
-	return &Application{window: win, running: true}
+	result := &Application{App: app, window: Windows.Create(window.NewWindowProps(name, 0, 0)), running: true, Name: name}
+	result.window.SetEventCallback(window.EventCallBackFn{CallbackFn: result.OnEvent})
+	return result
 }
 
 func (app *Application) Close() {
@@ -33,7 +37,18 @@ func (app *Application) Run() {
 	logsys.PrintLog(logsys.Lclient)
 
 	for app.running {
-		//fmt.Println(x % 2)
 		app.window.OnUpdate()
 	}
+}
+
+func (app *Application) OnEvent(e *event.Eventum) {
+	logsys.ZF_CORE_INFO(e.ToString())
+
+	dispatcher := event.NewEventDispatcher(e)
+	dispatcher.Dispatch(event.EventFn{Event: &appEvent.WindowCloseEvent{}, Fn: app.OnWindowClose})
+}
+
+func (app *Application) OnWindowClose(w event.Event) bool {
+	app.running = false
+	return true
 }

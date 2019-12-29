@@ -6,71 +6,67 @@ import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
 )
 
-type keyEvent struct {
-	event   *event.Eventum
-	keyCode int
-}
-
-func (k keyEvent) GetKeyCode() int {
-	return k.keyCode
-}
-func (keyEvent) GetEventType() event.EventType {
-	return event.NoneType
-}
-func (keyEvent) GetName() string {
-	return ""
-}
-func (k keyEvent) GetCategoryFlags() []event.EventCategory {
+var getCatFlags = func() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryKeyboard, event.EventCategoryInput}
 }
-func (keyEvent) ToString() string {
-	return "KeyEvent: "
-}
-func (keyEvent) IsInCategory(cat event.EventCategory) bool {
+var inCatCheck = func(cat event.EventCategory) bool {
+	if cat == event.EventCategoryKeyboard || cat == event.EventCategoryInput {
+		return true
+	}
 	return false
 }
 
-type keyPressedEvent struct {
-	event       keyEvent
-	repeatCount int
+type KeyPressedEvent struct {
+	KeyCode, RepeatCount int
 }
 
-func NewKeyPressedEvent(code, count int) keyPressedEvent {
-	return keyPressedEvent{event: keyEvent{event: event.NewEventum(&keyEvent{}, event.KeyPressed), keyCode: code}, repeatCount: count}
+func NewKeyPressedEvent(code, count int) *event.Eventum {
+	return event.NewEventum(&KeyPressedEvent{KeyCode: code, RepeatCount: count}, event.KeyPressed)
 }
-func (kp keyPressedEvent) GetRepeatCount() int {
-	return kp.repeatCount
+func (kp KeyPressedEvent) GetRepeatCount() int {
+	return kp.RepeatCount
 }
-func (kp keyPressedEvent) GetStaticType() event.EventType {
+func (kp KeyPressedEvent) GetStaticType() event.EventType {
 	return event.KeyPressed
 }
-func (kp keyPressedEvent) GetEventType() event.EventType {
+func (kp KeyPressedEvent) GetEventType() event.EventType {
 	return kp.GetStaticType()
 }
-func (keyPressedEvent) GetName() string {
+func (KeyPressedEvent) GetName() string {
 	return "KeyPressed"
 }
-func (kp keyPressedEvent) ToString() string {
-	return fmt.Sprintf("KeyPressedEvent: %v (%v repeats)", kp.event.keyCode, kp.repeatCount)
+func (KeyPressedEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
+}
+func (kp KeyPressedEvent) ToString() string {
+	return fmt.Sprintf("KeyPressedEvent: %v (%v repeats)", kp.KeyCode, kp.RepeatCount)
+}
+func (kp KeyPressedEvent) IsInCategory(cat event.EventCategory) bool {
+	return inCatCheck(cat)
 }
 
-type keyReleasedEvent struct {
-	event keyEvent
+type KeyReleasedEvent struct {
+	KeyCode int
 }
 
-func NewkeyReleasedEvent(code int) keyReleasedEvent {
-	return keyReleasedEvent{event: keyEvent{event: event.NewEventum(&keyEvent{}, event.KeyPressed), keyCode: code}}
+func NewKeyReleasedEvent(code int) *event.Eventum {
+	return event.NewEventum(&KeyReleasedEvent{KeyCode: code}, event.KeyReleased)
 }
-
-func (kr keyReleasedEvent) GetStaticType() event.EventType {
+func (kr KeyReleasedEvent) GetStaticType() event.EventType {
 	return event.KeyReleased
 }
-func (kr keyReleasedEvent) GetEventType() event.EventType {
+func (kr KeyReleasedEvent) GetEventType() event.EventType {
 	return kr.GetStaticType()
 }
-func (kr keyReleasedEvent) GetName() string {
+func (KeyReleasedEvent) GetName() string {
 	return "KeyReleased"
 }
-func (kr keyReleasedEvent) ToString() string {
-	return fmt.Sprintf("KeyReleasedEvent: %v", kr.event.keyCode)
+func (KeyReleasedEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
+}
+func (kr KeyReleasedEvent) ToString() string {
+	return fmt.Sprintf("KeyReleasedEvent: %v", kr.KeyCode)
+}
+func (kr KeyReleasedEvent) IsInCategory(cat event.EventCategory) bool {
+	return inCatCheck(cat)
 }

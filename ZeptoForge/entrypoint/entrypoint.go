@@ -18,8 +18,8 @@ func main() {
 
 	logsys.Init()
 
-	sb := sandbox.CreateApplication()
-	defer sb.Close()
-	sb.App.Init()
-	sb.Run()
+	app := sandbox.CreateApplication()
+	defer app.Close()
+	app.App.Init()
+	app.Run()
 }

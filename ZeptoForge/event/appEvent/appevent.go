@@ -6,139 +6,141 @@ import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
 )
 
-type windowResizeEvent struct {
-	event         *event.Eventum
-	width, height uint
+var getCatFlags = func() []event.EventCategory {
+	return []event.EventCategory{event.EventCategoryApplication}
+}
+var inCatCheck = func(cat event.EventCategory) bool {
+	return event.Contains([]event.EventCategory{event.EventCategoryApplication}, cat)
 }
 
-func NewWindowResizeEvent(width, height uint) windowResizeEvent {
-	return windowResizeEvent{event: event.NewEventum(&windowResizeEvent{}, event.WindowResize), width: width, height: height}
+type WindowResizeEvent struct {
+	width, height int
 }
-func (wr windowResizeEvent) GetWidth() uint {
+
+func NewWindowResizeEvent(width, height int) *event.Eventum {
+	return event.NewEventum(&WindowResizeEvent{width: width, height: height}, event.WindowResize)
+}
+func (wr WindowResizeEvent) GetWidth() int {
 	return wr.width
 }
-func (wr windowResizeEvent) GetHeight() uint {
+func (wr WindowResizeEvent) GetHeight() int {
 	return wr.height
 }
-func (wr windowResizeEvent) GetStaticType() event.EventType {
+func (WindowResizeEvent) GetStaticType() event.EventType {
 	return event.WindowResize
 }
-func (wr windowResizeEvent) GetEventType() event.EventType {
+func (wr WindowResizeEvent) GetEventType() event.EventType {
 	return wr.GetStaticType()
 }
-func (wr windowResizeEvent) GetName() string {
+func (wr WindowResizeEvent) GetName() string {
 	return "WindowResize"
 }
-func (wr windowResizeEvent) GetCategoryFlags() []event.EventCategory {
-	return []event.EventCategory{event.EventCategoryApplication}
+func (wr WindowResizeEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
 }
-func (wr windowResizeEvent) ToString() string {
+func (wr WindowResizeEvent) ToString() string {
 	return fmt.Sprintf("WindowResizeEvent: %v, %v", wr.width, wr.height)
 }
-func (wr windowResizeEvent) IsInCategory(e event.EventCategory) bool {
-	return event.Contains(wr.GetCategoryFlags(), e)
+func (wr WindowResizeEvent) IsInCategory(e event.EventCategory) bool {
+	return inCatCheck(e)
 }
 
-type windowCloseEvent struct {
-	event *event.Eventum
+type WindowCloseEvent struct {
 }
 
-func NewWindowCloseEvent() windowCloseEvent {
-	return windowCloseEvent{event: event.NewEventum(&windowCloseEvent{}, event.WindowClose)}
+func NewWindowCloseEvent() *event.Eventum {
+	return event.NewEventum(&WindowCloseEvent{}, event.WindowClose)
 }
-func (wc windowCloseEvent) GetStaticType() event.EventType {
+func (wc WindowCloseEvent) GetStaticType() event.EventType {
 	return event.WindowClose
 }
-func (wc windowCloseEvent) GetEventType() event.EventType {
+func (wc WindowCloseEvent) GetEventType() event.EventType {
 	return wc.GetStaticType()
 }
-func (wc windowCloseEvent) GetName() string {
+func (wc WindowCloseEvent) GetName() string {
 	return "WindowClose"
 }
-func (wc windowCloseEvent) GetCategoryFlags() []event.EventCategory {
-	return []event.EventCategory{event.EventCategoryApplication}
+func (wc WindowCloseEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
 }
-func (wc windowCloseEvent) ToString() string {
+func (wc WindowCloseEvent) ToString() string {
 	return "WindowCloseEvent: "
 }
-func (wc windowCloseEvent) IsInCategory(e event.EventCategory) bool {
-	return event.Contains(wc.GetCategoryFlags(), e)
+func (wc WindowCloseEvent) IsInCategory(e event.EventCategory) bool {
+	return inCatCheck(e)
 }
 
-type appTickEvent struct {
-	event *event.Eventum
+type AppTickEvent struct {
 }
 
-func NewAppTickEvent() appTickEvent {
-	return appTickEvent{event: event.NewEventum(&appTickEvent{}, event.AppTick)}
+func NewAppTickEvent() *event.Eventum {
+	return event.NewEventum(&AppTickEvent{}, event.AppTick)
 }
-func (at appTickEvent) GetStaticType() event.EventType {
+func (at AppTickEvent) GetStaticType() event.EventType {
 	return event.AppTick
 }
-func (at appTickEvent) GetEventType() event.EventType {
+func (at AppTickEvent) GetEventType() event.EventType {
 	return at.GetStaticType()
 }
-func (at appTickEvent) GetName() string {
+func (at AppTickEvent) GetName() string {
 	return "AppTick"
 }
-func (at appTickEvent) GetCategoryFlags() []event.EventCategory {
-	return []event.EventCategory{event.EventCategoryApplication}
+func (at AppTickEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
 }
-func (at appTickEvent) ToString() string {
-	return "WindowCloseEvent: "
+func (at AppTickEvent) ToString() string {
+	return "WindowTickEvent: "
 }
-func (at appTickEvent) IsInCategory(e event.EventCategory) bool {
-	return event.Contains(at.GetCategoryFlags(), e)
-}
-
-type appUpdateEvent struct {
-	event *event.Eventum
+func (at AppTickEvent) IsInCategory(e event.EventCategory) bool {
+	return inCatCheck(e)
 }
 
-func NewAppUpdateEvent() appUpdateEvent {
-	return appUpdateEvent{event: event.NewEventum(&appUpdateEvent{}, event.AppUpdate)}
+type AppUpdateEvent struct {
 }
-func (au appUpdateEvent) GetStaticType() event.EventType {
-	return event.AppTick
+
+func NewAppUpdateEvent() *event.Eventum {
+	return event.NewEventum(&AppUpdateEvent{}, event.AppUpdate)
 }
-func (au appUpdateEvent) GetEventType() event.EventType {
+func (au AppUpdateEvent) GetStaticType() event.EventType {
+	return event.AppUpdate
+}
+func (au AppUpdateEvent) GetEventType() event.EventType {
 	return au.GetStaticType()
 }
-func (au appUpdateEvent) GetName() string {
+func (au AppUpdateEvent) GetName() string {
 	return "AppUpdate"
 }
-func (au appUpdateEvent) GetCategoryFlags() []event.EventCategory {
-	return []event.EventCategory{event.EventCategoryApplication}
+func (au AppUpdateEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
 }
-func (au appUpdateEvent) ToString() string {
+func (au AppUpdateEvent) ToString() string {
 	return "WindowUpdateEvent: "
 }
-func (au appUpdateEvent) IsInCategory(e event.EventCategory) bool {
-	return event.Contains(au.GetCategoryFlags(), e)
+func (au AppUpdateEvent) IsInCategory(e event.EventCategory) bool {
+	return inCatCheck(e)
 }
 
-type appRenderEvent struct {
-	event *event.Eventum
+type AppRenderEvent struct {
 }
 
-func NewAppRenderEvent() appRenderEvent {
-	return appRenderEvent{event: event.NewEventum(&appRenderEvent{}, event.AppRender)}
+func NewAppRenderEvent() *event.Eventum {
+	return event.NewEventum(&AppRenderEvent{}, event.AppRender)
 }
-func (ar appRenderEvent) GetStaticType() event.EventType {
-	return event.AppTick
+func (ar AppRenderEvent) GetStaticType() event.EventType {
+	return event.AppRender
 }
-func (ar appRenderEvent) GetEventType() event.EventType {
+func (ar AppRenderEvent) GetEventType() event.EventType {
 	return ar.GetStaticType()
 }
-func (ar appRenderEvent) GetName() string {
+func (ar AppRenderEvent) GetName() string {
 	return "AppRender"
 }
-func (ar appRenderEvent) GetCategoryFlags() []event.EventCategory {
-	return []event.EventCategory{event.EventCategoryApplication}
+func (ar AppRenderEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
 }
-func (ar appRenderEvent) ToString() string {
+func (ar AppRenderEvent) ToString() string {
 	return "WindowRenderEvent: "
 }
-func (ar appRenderEvent) IsInCategory(e event.EventCategory) bool {
-	return event.Contains(ar.GetCategoryFlags(), e)
+func (ar AppRenderEvent) IsInCategory(e event.EventCategory) bool {
+	return inCatCheck(e)
 }

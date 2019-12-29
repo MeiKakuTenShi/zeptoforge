@@ -34,6 +34,9 @@ var (
 	}
 	ZF_CORE_INFO = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(infoText("CORE_INFO"), ": ", basicText(msg)))
+		// fmt.Print(&core)
+		line, _ := core.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_CORE_TRACE = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(traceText("CORE_TRACE"), ": ", basicText(msg)))

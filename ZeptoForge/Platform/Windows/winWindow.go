@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"unsafe"
 
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/appEvent"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/keyEvent"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/mouseEvent"
+
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -27,6 +31,8 @@ var (
 	default_title   = "ZeptoForge Application"
 	default_width   = 1024
 	default_height  = 720
+
+	// glfwErroCallback =
 )
 
 func Create(props *window.WindowProps) WinWindow {
@@ -69,8 +75,8 @@ func (win *WinWindow) GetWidth() int {
 func (win *WinWindow) GetHeight() int {
 	return win.data.height
 }
-func (win *WinWindow) SetEventCallback(callback *window.EventCallBackFn) {
-	win.data.callback = *callback
+func (win *WinWindow) SetEventCallback(callback window.EventCallBackFn) {
+	win.data.callback = callback
 }
 func (win *WinWindow) SetVSync(enabled bool) {
 	if enabled {
@@ -95,9 +101,8 @@ func (win *WinWindow) init(props *window.WindowProps) {
 		if err := glfw.Init(); err != nil {
 			logsys.ZF_CORE_ERROR(err)
 		}
-		//defer glfw.Terminate()
 		glfwInitialized = true
-		glfw.WindowHint(glfw.Resizable, glfw.False)
+		// glfw.WindowHint(glfw.Resizable, glfw.False)
 	}
 
 	var err error
@@ -108,4 +113,74 @@ func (win *WinWindow) init(props *window.WindowProps) {
 	win.window.MakeContextCurrent()
 	win.window.SetUserPointer(unsafe.Pointer(win.data))
 	win.SetVSync(true)
+
+	// Set GLFW callbacks
+
+	// Window
+	win.window.SetSizeCallback(func(w *glfw.Window, width, height int) {
+		data := *(*winData)(w.GetUserPointer())
+		data.width = width
+		data.height = height
+
+		e := appEvent.NewWindowResizeEvent(width, height)
+		data.callback.CallbackFn(e)
+	})
+
+	win.window.SetCloseCallback(func(w *glfw.Window) {
+		data := *(*winData)(w.GetUserPointer())
+
+		e := appEvent.NewWindowCloseEvent()
+		data.callback.CallbackFn(e)
+	})
+
+	// Keys
+	win.window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+		data := *(*winData)(w.GetUserPointer())
+
+		switch action {
+		case glfw.Press:
+			{
+				data.callback.CallbackFn(keyEvent.NewKeyPressedEvent(int(key), 0))
+				break
+			}
+		case glfw.Release:
+			{
+				data.callback.CallbackFn(keyEvent.NewKeyReleasedEvent(int(key)))
+				break
+			}
+		case glfw.Repeat:
+			{
+				data.callback.CallbackFn(keyEvent.NewKeyPressedEvent(int(key), 1))
+				break
+			}
+		}
+	})
+
+	// Mouse
+	win.window.SetMouseButtonCallback(func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+		data := *(*winData)(w.GetUserPointer())
+
+		switch action {
+		case glfw.Press:
+			{
+				data.callback.CallbackFn(mouseEvent.NewMouseButtonPressedEvent(int(button)))
+				break
+			}
+		case glfw.Release:
+			{
+				data.callback.CallbackFn(mouseEvent.NewMouseButtonReleasedEvent(int(button)))
+				break
+			}
+		}
+	})
+
+	win.window.SetScrollCallback(func(w *glfw.Window, xOff, yOff float64) {
+		data := *(*winData)(w.GetUserPointer())
+		data.callback.CallbackFn(mouseEvent.NewMouseScrolledEvent(xOff, yOff))
+	})
+
+	win.window.SetCursorPosCallback(func(w *glfw.Window, xPos, yPos float64) {
+		data := *(*winData)(w.GetUserPointer())
+		data.callback.CallbackFn(mouseEvent.NewMouseMovedEvent(xPos, yPos))
+	})
 }
