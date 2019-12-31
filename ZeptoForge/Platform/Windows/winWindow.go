@@ -10,6 +10,7 @@ import (
 
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
+	"github.com/go-gl/gl/v4.6-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
@@ -97,14 +98,19 @@ func (win *WinWindow) init(props *window.WindowProps) {
 
 	logsys.ZF_CORE_INFO(fmt.Sprintf("Creating window %s (%v, %v)", props.Title, props.Width, props.Height))
 
+	// Initialize GLFW
 	if !glfwInitialized {
 		if err := glfw.Init(); err != nil {
 			logsys.ZF_CORE_ERROR(err)
 		}
 		glfwInitialized = true
-		// glfw.WindowHint(glfw.Resizable, glfw.False)
+		glfw.WindowHint(glfw.Resizable, glfw.False)
+		glfw.WindowHint(glfw.ContextVersionMajor, 4)
+		glfw.WindowHint(glfw.ContextVersionMinor, 6)
+		glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
+		glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.False)
 	}
-
+	// Create and Initialize Window
 	var err error
 	win.window, err = glfw.CreateWindow(props.Width, props.Height, props.Title, nil, nil)
 	if err != nil {
@@ -114,8 +120,14 @@ func (win *WinWindow) init(props *window.WindowProps) {
 	win.window.SetUserPointer(unsafe.Pointer(win.data))
 	win.SetVSync(true)
 
-	// Set GLFW callbacks
+	// Initialize OpenGL
+	if err = gl.Init(); err != nil {
+		logsys.ZF_CORE_ERROR(err)
+	}
+	version := gl.GoStr(gl.GetString(gl.VERSION))
+	logsys.ZF_CORE_INFO("OpenGL version", version)
 
+	// Set GLFW callbacks
 	// Window
 	win.window.SetSizeCallback(func(w *glfw.Window, width, height int) {
 		data := *(*winData)(w.GetUserPointer())

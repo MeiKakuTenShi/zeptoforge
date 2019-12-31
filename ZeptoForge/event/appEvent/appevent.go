@@ -51,7 +51,7 @@ type WindowCloseEvent struct {
 func NewWindowCloseEvent() *event.Eventum {
 	return event.NewEventum(&WindowCloseEvent{}, event.WindowClose)
 }
-func (wc WindowCloseEvent) GetStaticType() event.EventType {
+func (WindowCloseEvent) GetStaticType() event.EventType {
 	return event.WindowClose
 }
 func (wc WindowCloseEvent) GetEventType() event.EventType {
@@ -76,7 +76,7 @@ type AppTickEvent struct {
 func NewAppTickEvent() *event.Eventum {
 	return event.NewEventum(&AppTickEvent{}, event.AppTick)
 }
-func (at AppTickEvent) GetStaticType() event.EventType {
+func (AppTickEvent) GetStaticType() event.EventType {
 	return event.AppTick
 }
 func (at AppTickEvent) GetEventType() event.EventType {

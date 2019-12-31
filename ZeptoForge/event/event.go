@@ -69,6 +69,9 @@ func (ed eventDispatcher) Dispatch(fn EventFn) bool {
 func (e *Eventum) ToString() string {
 	return e.eventum.ToString()
 }
+func (e *Eventum) Done() bool {
+	return e.handled
+}
 
 var Contains = func(s []EventCategory, e EventCategory) bool {
 	for _, a := range s {

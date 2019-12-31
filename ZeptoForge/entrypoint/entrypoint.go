@@ -20,6 +20,6 @@ func main() {
 
 	app := sandbox.CreateApplication()
 	defer app.Close()
-	app.App.Init()
+	app.Init()
 	app.Run()
 }

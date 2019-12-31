@@ -28,9 +28,13 @@ var (
 	// CORE log macros
 	ZF_CORE_ERROR = func(msg ...interface{}) {
 		coreLog.Panic(fmt.Sprint(errorText("CORE_ERROR"), ": ", basicText(msg)))
+		line, _ := core.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_CORE_WARN = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(warnText("CORE_WARNING"), ": ", basicText(msg)))
+		line, _ := core.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_CORE_INFO = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(infoText("CORE_INFO"), ": ", basicText(msg)))
@@ -40,26 +44,40 @@ var (
 	}
 	ZF_CORE_TRACE = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(traceText("CORE_TRACE"), ": ", basicText(msg)))
+		line, _ := core.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_CORE_FATAL = func(msg ...interface{}) {
 		coreLog.Fatal(fmt.Sprint(fatalText("CORE_FATAL"), ": ", basicText(msg)))
+		line, _ := core.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 
 	// CLIENT log macros
 	ZF_ERROR = func(msg ...interface{}) {
 		clientLog.Panic(fmt.Sprint(errorText("CLIENT_ERROR"), ": ", basicText(msg)))
+		line, _ := client.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_WARN = func(msg ...interface{}) {
 		clientLog.Print(fmt.Sprint(warnText("CLIENT_WARN"), ": ", basicText(msg)))
+		line, _ := client.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_INFO = func(msg ...interface{}) {
 		clientLog.Print(fmt.Sprint(infoText("CLIENT_INFO"), ": ", basicText(msg)))
+		line, _ := client.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_TRACE = func(msg ...interface{}) {
-		clientLog.Fatal(fmt.Sprint(traceText("CLIENT_TRACE"), ": ", basicText(msg)))
+		clientLog.Print(fmt.Sprint(traceText("CLIENT_TRACE"), ": ", basicText(msg)))
+		line, _ := client.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 	ZF_FATAL = func(msg ...interface{}) {
 		clientLog.Fatal(fmt.Sprint(fatalText("CLIENT_FATAL"), ": ", basicText(msg)))
+		line, _ := client.ReadString([]byte("\n")[0])
+		fmt.Print(line)
 	}
 )
 
