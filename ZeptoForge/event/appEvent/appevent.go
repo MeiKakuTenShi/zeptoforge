@@ -32,16 +32,16 @@ func (WindowResizeEvent) GetStaticType() event.EventType {
 func (wr WindowResizeEvent) GetEventType() event.EventType {
 	return wr.GetStaticType()
 }
-func (wr WindowResizeEvent) GetName() string {
+func (WindowResizeEvent) GetName() string {
 	return "WindowResize"
 }
-func (wr WindowResizeEvent) GetCategoryFlags() []event.EventCategory {
+func (WindowResizeEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (wr WindowResizeEvent) ToString() string {
-	return fmt.Sprintf("WindowResizeEvent: %v, %v", wr.width, wr.height)
+func (wr WindowResizeEvent) String() string {
+	return fmt.Sprintf("WindowResizeEvent| WIDTH(%v) HEIGHT(%v)", wr.width, wr.height)
 }
-func (wr WindowResizeEvent) IsInCategory(e event.EventCategory) bool {
+func (WindowResizeEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
@@ -57,16 +57,16 @@ func (WindowCloseEvent) GetStaticType() event.EventType {
 func (wc WindowCloseEvent) GetEventType() event.EventType {
 	return wc.GetStaticType()
 }
-func (wc WindowCloseEvent) GetName() string {
+func (WindowCloseEvent) GetName() string {
 	return "WindowClose"
 }
-func (wc WindowCloseEvent) GetCategoryFlags() []event.EventCategory {
+func (WindowCloseEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (wc WindowCloseEvent) ToString() string {
-	return "WindowCloseEvent: "
+func (WindowCloseEvent) String() string {
+	return "WindowCloseEvent"
 }
-func (wc WindowCloseEvent) IsInCategory(e event.EventCategory) bool {
+func (WindowCloseEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
@@ -82,16 +82,16 @@ func (AppTickEvent) GetStaticType() event.EventType {
 func (at AppTickEvent) GetEventType() event.EventType {
 	return at.GetStaticType()
 }
-func (at AppTickEvent) GetName() string {
+func (AppTickEvent) GetName() string {
 	return "AppTick"
 }
-func (at AppTickEvent) GetCategoryFlags() []event.EventCategory {
+func (AppTickEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (at AppTickEvent) ToString() string {
-	return "WindowTickEvent: "
+func (AppTickEvent) String() string {
+	return "WindowTickEvent"
 }
-func (at AppTickEvent) IsInCategory(e event.EventCategory) bool {
+func (AppTickEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
@@ -101,22 +101,22 @@ type AppUpdateEvent struct {
 func NewAppUpdateEvent() *event.Eventum {
 	return event.NewEventum(&AppUpdateEvent{}, event.AppUpdate)
 }
-func (au AppUpdateEvent) GetStaticType() event.EventType {
+func (AppUpdateEvent) GetStaticType() event.EventType {
 	return event.AppUpdate
 }
 func (au AppUpdateEvent) GetEventType() event.EventType {
 	return au.GetStaticType()
 }
-func (au AppUpdateEvent) GetName() string {
+func (AppUpdateEvent) GetName() string {
 	return "AppUpdate"
 }
-func (au AppUpdateEvent) GetCategoryFlags() []event.EventCategory {
+func (AppUpdateEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (au AppUpdateEvent) ToString() string {
-	return "WindowUpdateEvent: "
+func (AppUpdateEvent) String() string {
+	return "WindowUpdateEvent"
 }
-func (au AppUpdateEvent) IsInCategory(e event.EventCategory) bool {
+func (AppUpdateEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
@@ -126,21 +126,21 @@ type AppRenderEvent struct {
 func NewAppRenderEvent() *event.Eventum {
 	return event.NewEventum(&AppRenderEvent{}, event.AppRender)
 }
-func (ar AppRenderEvent) GetStaticType() event.EventType {
+func (AppRenderEvent) GetStaticType() event.EventType {
 	return event.AppRender
 }
 func (ar AppRenderEvent) GetEventType() event.EventType {
 	return ar.GetStaticType()
 }
-func (ar AppRenderEvent) GetName() string {
+func (AppRenderEvent) GetName() string {
 	return "AppRender"
 }
-func (ar AppRenderEvent) GetCategoryFlags() []event.EventCategory {
+func (AppRenderEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (ar AppRenderEvent) ToString() string {
-	return "WindowRenderEvent: "
+func (AppRenderEvent) String() string {
+	return "WindowRenderEvent"
 }
-func (ar AppRenderEvent) IsInCategory(e event.EventCategory) bool {
+func (AppRenderEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }

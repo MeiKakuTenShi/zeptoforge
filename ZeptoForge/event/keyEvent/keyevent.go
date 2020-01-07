@@ -17,16 +17,19 @@ var inCatCheck = func(cat event.EventCategory) bool {
 }
 
 type KeyPressedEvent struct {
-	KeyCode, RepeatCount int
+	keyCode, repeatCount int
 }
 
 func NewKeyPressedEvent(code, count int) *event.Eventum {
-	return event.NewEventum(&KeyPressedEvent{KeyCode: code, RepeatCount: count}, event.KeyPressed)
+	return event.NewEventum(&KeyPressedEvent{keyCode: code, repeatCount: count}, event.KeyPressed)
 }
-func (kp KeyPressedEvent) GetRepeatCount() int {
-	return kp.RepeatCount
+func (kp *KeyPressedEvent) GetKey() int {
+	return kp.keyCode
 }
-func (kp KeyPressedEvent) GetStaticType() event.EventType {
+func (kp *KeyPressedEvent) GetRepeatCount() int {
+	return kp.repeatCount
+}
+func (KeyPressedEvent) GetStaticType() event.EventType {
 	return event.KeyPressed
 }
 func (kp KeyPressedEvent) GetEventType() event.EventType {
@@ -38,21 +41,24 @@ func (KeyPressedEvent) GetName() string {
 func (KeyPressedEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (kp KeyPressedEvent) ToString() string {
-	return fmt.Sprintf("KeyPressedEvent: %v (%v repeats)", kp.KeyCode, kp.RepeatCount)
+func (kp KeyPressedEvent) String() string {
+	return fmt.Sprintf("KeyPressedEvent| KEYCODE(%v (%v REPEATS))", kp.keyCode, kp.repeatCount)
 }
-func (kp KeyPressedEvent) IsInCategory(cat event.EventCategory) bool {
+func (KeyPressedEvent) IsInCategory(cat event.EventCategory) bool {
 	return inCatCheck(cat)
 }
 
 type KeyReleasedEvent struct {
-	KeyCode int
+	keyCode int
 }
 
 func NewKeyReleasedEvent(code int) *event.Eventum {
-	return event.NewEventum(&KeyReleasedEvent{KeyCode: code}, event.KeyReleased)
+	return event.NewEventum(&KeyReleasedEvent{keyCode: code}, event.KeyReleased)
 }
-func (kr KeyReleasedEvent) GetStaticType() event.EventType {
+func (kr *KeyReleasedEvent) GetKey() int {
+	return kr.keyCode
+}
+func (KeyReleasedEvent) GetStaticType() event.EventType {
 	return event.KeyReleased
 }
 func (kr KeyReleasedEvent) GetEventType() event.EventType {
@@ -64,9 +70,38 @@ func (KeyReleasedEvent) GetName() string {
 func (KeyReleasedEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (kr KeyReleasedEvent) ToString() string {
-	return fmt.Sprintf("KeyReleasedEvent: %v", kr.KeyCode)
+func (kr KeyReleasedEvent) String() string {
+	return fmt.Sprintf("KeyReleasedEvent| KEYCODE(%v)", kr.keyCode)
 }
-func (kr KeyReleasedEvent) IsInCategory(cat event.EventCategory) bool {
+func (KeyReleasedEvent) IsInCategory(cat event.EventCategory) bool {
+	return inCatCheck(cat)
+}
+
+type KeyTypedEvent struct {
+	keyCode rune
+}
+
+func NewKeyTypedEvent(code rune) *event.Eventum {
+	return event.NewEventum(&KeyTypedEvent{keyCode: code}, event.KeyTyped)
+}
+func (kt *KeyTypedEvent) GetKey() rune {
+	return kt.keyCode
+}
+func (KeyTypedEvent) GetStaticType() event.EventType {
+	return event.KeyTyped
+}
+func (kt *KeyTypedEvent) GetEventType() event.EventType {
+	return kt.GetStaticType()
+}
+func (KeyTypedEvent) GetName() string {
+	return "KeyTyped"
+}
+func (KeyTypedEvent) GetCategoryFlags() []event.EventCategory {
+	return getCatFlags()
+}
+func (kt *KeyTypedEvent) String() string {
+	return fmt.Sprintf("KeyTypedEvent| KEYCODE(%v)", kt.keyCode)
+}
+func (KeyTypedEvent) IsInCategory(cat event.EventCategory) bool {
 	return inCatCheck(cat)
 }

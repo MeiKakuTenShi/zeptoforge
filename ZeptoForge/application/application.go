@@ -9,8 +9,10 @@ import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
 )
 
+var app_SINGLETON *Application
+
 type Application struct {
-	window  Windows.WinWindow
+	window  window.Window
 	stack   layerstack.LayerStack
 	running bool
 	Name    string
@@ -18,25 +20,46 @@ type Application struct {
 
 func NewApplication(name string) *Application {
 	// TODO: make this platform independent
-	result := &Application{window: Windows.Create(window.NewWindowProps(name, 0, 0)), stack: layerstack.NewLayerStack(), running: true, Name: name}
-	result.window.SetEventCallback(window.EventCallBackFn{CallbackFn: result.OnEvent})
-	return result
+	if app_SINGLETON == nil {
+		result := &Application{window: Windows.NewWinWindow(window.NewWindowProps(name, 0, 0)), stack: layerstack.NewLayerStack(), running: true, Name: name}
+		result.window.SetEventCallback(window.EventCallBackFn{CallbackFn: result.OnEvent})
+		app_SINGLETON = result
+	}
+
+	return app_SINGLETON
+}
+
+func DisplaySize() [2]float32 {
+	return [2]float32{float32(app_SINGLETON.window.GetWidth()), float32(app_SINGLETON.window.GetHeight())}
+}
+
+func FrameBufferSize() [2]float32 {
+	return app_SINGLETON.window.FramebufferSize()
+}
+
+func GetWindow() window.Window {
+	return app_SINGLETON.window
 }
 
 func (app *Application) Close() {
+	for _, v := range app.stack.GetStack() {
+		v.Layer.OnDetach()
+	}
 	app.window.Destruct()
 }
 
 func (app *Application) PushLayer(layer *layerstack.Layem) {
 	app.stack.PushLayer(layer)
+	layer.Layer.OnAttach()
 }
 
 func (app *Application) PushOverlay(layer *layerstack.Layem) {
 	app.stack.PushOverlay(layer)
+	layer.Layer.OnAttach()
 }
 
 func (app *Application) OnEvent(e *event.Eventum) {
-	logsys.ZF_CORE_INFO(e.ToString())
+	logsys.ZF_CORE_INFO(e.String())
 
 	dispatcher := event.NewEventDispatcher(e)
 	dispatcher.Dispatch(event.EventFn{Event: &appEvent.WindowCloseEvent{}, Fn: app.OnWindowClose})
@@ -50,9 +73,6 @@ func (app *Application) OnEvent(e *event.Eventum) {
 }
 
 func (app *Application) Run() {
-	logsys.PrintLog(logsys.Lcore)
-	logsys.PrintLog(logsys.Lclient)
-
 	for app.running {
 		for _, v := range app.stack.GetStack() {
 			v.Layer.OnUpdate()
@@ -61,7 +81,7 @@ func (app *Application) Run() {
 	}
 }
 
-func (app *Application) OnWindowClose(w event.Event) bool {
+func (app *Application) OnWindowClose(w event.Eventum) bool {
 	app.running = false
 	return true
 }

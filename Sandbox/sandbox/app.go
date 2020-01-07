@@ -3,6 +3,7 @@ package sandbox
 import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/application"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/imgui"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/layerstack"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 )
@@ -14,6 +15,7 @@ type Sandbox struct {
 func (sb *Sandbox) Init() {
 	logsys.ZF_INFO("Sandbox Application Initialized")
 	sb.app.PushLayer(layerstack.NewLayem(&ExLayer{}, "ExampleLayer"))
+	sb.app.PushOverlay(layerstack.NewLayem(&imgui.ImGuiLayer{}, "ImGuiLayer"))
 }
 
 func (sb *Sandbox) Run() {
@@ -43,5 +45,5 @@ func (l ExLayer) OnUpdate() {
 }
 
 func (l ExLayer) OnEvent(e *event.Eventum) {
-	logsys.ZF_TRACE(e.ToString())
+	logsys.ZF_TRACE(e.String())
 }

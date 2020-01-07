@@ -22,7 +22,6 @@ type winData struct {
 }
 
 type WinWindow struct {
-	win    window.Window
 	window *glfw.Window
 	data   *winData
 }
@@ -36,8 +35,14 @@ var (
 	// glfwErroCallback =
 )
 
-func Create(props *window.WindowProps) WinWindow {
-	result := WinWindow{data: &winData{}}
+func NewWinWindow(props *window.WindowProps) window.Window {
+	win := &WinWindow{}
+	result := win.Create(props)
+	return result
+}
+
+func (win *WinWindow) Create(props *window.WindowProps) window.Window {
+	win.data = &winData{}
 
 	if props.Title == "" {
 		props.Title = default_title
@@ -55,9 +60,9 @@ func Create(props *window.WindowProps) WinWindow {
 
 	}
 
-	result.init(props)
+	win.init(props)
 
-	return result
+	return win
 }
 
 func (win *WinWindow) Destruct() {
@@ -71,10 +76,19 @@ func (win *WinWindow) OnUpdate() {
 	win.window.SwapBuffers()
 }
 func (win *WinWindow) GetWidth() int {
-	return win.data.width
+	w, _ := win.window.GetSize()
+	return w
+}
+func (win *WinWindow) GetWindow() *glfw.Window {
+	return win.window
 }
 func (win *WinWindow) GetHeight() int {
-	return win.data.height
+	_, h := win.window.GetSize()
+	return h
+}
+func (win *WinWindow) FramebufferSize() [2]float32 {
+	w, h := win.window.GetFramebufferSize()
+	return [2]float32{float32(w), float32(h)}
 }
 func (win *WinWindow) SetEventCallback(callback window.EventCallBackFn) {
 	win.data.callback = callback
@@ -104,11 +118,12 @@ func (win *WinWindow) init(props *window.WindowProps) {
 			logsys.ZF_CORE_ERROR(err)
 		}
 		glfwInitialized = true
-		glfw.WindowHint(glfw.Resizable, glfw.False)
+		glfw.WindowHint(glfw.Resizable, glfw.True)
 		glfw.WindowHint(glfw.ContextVersionMajor, 4)
 		glfw.WindowHint(glfw.ContextVersionMinor, 6)
 		glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 		glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.False)
+		logsys.ZF_CORE_INFO("glfw initialized")
 	}
 	// Create and Initialize Window
 	var err error
@@ -166,6 +181,11 @@ func (win *WinWindow) init(props *window.WindowProps) {
 				break
 			}
 		}
+	})
+
+	win.window.SetCharCallback(func(w *glfw.Window, char rune) {
+		data := *(*winData)(w.GetUserPointer())
+		data.callback.CallbackFn(keyEvent.NewKeyTypedEvent(char))
 	})
 
 	// Mouse

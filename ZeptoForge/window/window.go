@@ -2,6 +2,7 @@ package window
 
 import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type WindowProps struct {
@@ -22,12 +23,14 @@ type Window interface {
 	Destruct()
 	OnUpdate()
 	// Getters
-	GetWidth()
-	GetHeight()
+	GetWindow() *glfw.Window
+	GetWidth() int
+	GetHeight() int
+	FramebufferSize() [2]float32
 	// Window attributes
 	SetEventCallback(EventCallBackFn)
 	SetVSync(bool)
-	IsVSync()
+	IsVSync() bool
 
-	Create(*WindowProps) *Window
+	Create(*WindowProps) Window
 }

@@ -13,118 +13,124 @@ var inCatCheck = func(cat event.EventCategory) bool {
 	return event.Contains([]event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}, cat)
 }
 
-type mouseMovedEvent struct {
+type MouseMovedEvent struct {
 	mouseX, mouseY float64
 }
 
 func NewMouseMovedEvent(x, y float64) *event.Eventum {
-	return event.NewEventum(&mouseMovedEvent{mouseX: x, mouseY: y}, event.MouseMoved)
+	return event.NewEventum(&MouseMovedEvent{mouseX: x, mouseY: y}, event.MouseMoved)
 }
-func (mm *mouseMovedEvent) GetX() float64 {
+func (mm MouseMovedEvent) GetX() float64 {
 	return mm.mouseX
 }
-func (mm *mouseMovedEvent) GetY() float64 {
+func (mm MouseMovedEvent) GetY() float64 {
 	return mm.mouseY
 }
-func (mm mouseMovedEvent) GetStaticType() event.EventType {
+func (MouseMovedEvent) GetStaticType() event.EventType {
 	return event.MouseMoved
 }
-func (mm mouseMovedEvent) GetEventType() event.EventType {
-	return mouseMovedEvent{}.GetStaticType()
+func (mm MouseMovedEvent) GetEventType() event.EventType {
+	return mm.GetStaticType()
 }
-func (mm mouseMovedEvent) GetName() string {
+func (MouseMovedEvent) GetName() string {
 	return "MouseMoved"
 }
-func (mm mouseMovedEvent) GetCategoryFlags() []event.EventCategory {
+func (MouseMovedEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (mm mouseMovedEvent) ToString() string {
-	return "MouseMovedEvent: " + fmt.Sprintf("%g, %g", mm.mouseX, mm.mouseY)
+func (mm MouseMovedEvent) String() string {
+	return fmt.Sprintf("MouseMovedEvent| XPOS(%g) YPOS(%g)", mm.mouseX, mm.mouseY)
 }
-func (mm mouseMovedEvent) IsInCategory(e event.EventCategory) bool {
+func (MouseMovedEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
-type mouseScrolledEvent struct {
+type MouseScrolledEvent struct {
 	xOffset, yOffset float64
 }
 
 func NewMouseScrolledEvent(xOff, yOff float64) *event.Eventum {
-	return event.NewEventum(&mouseScrolledEvent{xOffset: xOff, yOffset: yOff}, event.MouseScrolled)
+	return event.NewEventum(&MouseScrolledEvent{xOffset: xOff, yOffset: yOff}, event.MouseScrolled)
 }
-func (ms mouseScrolledEvent) GetXOffset() float64 {
+func (ms MouseScrolledEvent) GetXOffset() float64 {
 	return ms.xOffset
 }
-func (ms mouseScrolledEvent) GetYOffset() float64 {
+func (ms MouseScrolledEvent) GetYOffset() float64 {
 	return ms.yOffset
 }
-func (mouseScrolledEvent) GetStaticType() event.EventType {
+func (MouseScrolledEvent) GetStaticType() event.EventType {
 	return event.MouseScrolled
 }
-func (ms mouseScrolledEvent) GetEventType() event.EventType {
-	return mouseScrolledEvent{}.GetStaticType()
+func (ms MouseScrolledEvent) GetEventType() event.EventType {
+	return ms.GetStaticType()
 }
-func (ms mouseScrolledEvent) GetName() string {
+func (MouseScrolledEvent) GetName() string {
 	return "MouseScrolled"
 }
-func (ms mouseScrolledEvent) GetCategoryFlags() []event.EventCategory {
+func (MouseScrolledEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (ms mouseScrolledEvent) ToString() string {
-	return "MouseScrolledEvent: " + fmt.Sprintf("%g, %g", ms.GetXOffset(), ms.GetYOffset())
+func (ms MouseScrolledEvent) String() string {
+	return fmt.Sprintf("MouseScrolledEvent| XOFFSET(%g) YOFFSET(%g)", ms.xOffset, ms.yOffset)
 }
-func (ms mouseScrolledEvent) IsInCategory(e event.EventCategory) bool {
+func (MouseScrolledEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
-type mouseButtonPressedEvent struct {
+type MouseButtonPressedEvent struct {
 	button int
 }
 
 func NewMouseButtonPressedEvent(b int) *event.Eventum {
-	return event.NewEventum(&mouseButtonPressedEvent{button: b}, event.MouseButtonPressed)
+	return event.NewEventum(&MouseButtonPressedEvent{button: b}, event.MouseButtonPressed)
 }
-func (mouseButtonPressedEvent) GetStaticType() event.EventType {
+func (mp MouseButtonPressedEvent) GetButton() int {
+	return mp.button
+}
+func (MouseButtonPressedEvent) GetStaticType() event.EventType {
 	return event.MouseButtonPressed
 }
-func (mp mouseButtonPressedEvent) GetEventType() event.EventType {
-	return mouseButtonPressedEvent{}.GetStaticType()
+func (mp MouseButtonPressedEvent) GetEventType() event.EventType {
+	return mp.GetStaticType()
 }
-func (mp mouseButtonPressedEvent) GetName() string {
+func (MouseButtonPressedEvent) GetName() string {
 	return "MouseButtonPressed"
 }
-func (mp mouseButtonPressedEvent) GetCategoryFlags() []event.EventCategory {
+func (MouseButtonPressedEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (mp mouseButtonPressedEvent) ToString() string {
-	return fmt.Sprintf("MouseButtonPressedEvent: %v", mp.button)
+func (mp MouseButtonPressedEvent) String() string {
+	return fmt.Sprintf("MouseButtonPressedEvent| BUTTON(%v)", mp.button)
 }
-func (mp mouseButtonPressedEvent) IsInCategory(e event.EventCategory) bool {
+func (MouseButtonPressedEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }
 
-type mouseButtonReleasedEvent struct {
+type MouseButtonReleasedEvent struct {
 	button int
 }
 
 func NewMouseButtonReleasedEvent(b int) *event.Eventum {
-	return event.NewEventum(&mouseButtonReleasedEvent{button: b}, event.MouseButtonReleased)
+	return event.NewEventum(&MouseButtonReleasedEvent{button: b}, event.MouseButtonReleased)
 }
-func (mouseButtonReleasedEvent) GetStaticType() event.EventType {
+func (mr MouseButtonReleasedEvent) GetButton() int {
+	return mr.button
+}
+func (MouseButtonReleasedEvent) GetStaticType() event.EventType {
 	return event.MouseButtonReleased
 }
-func (mr mouseButtonReleasedEvent) GetEventType() event.EventType {
+func (mr MouseButtonReleasedEvent) GetEventType() event.EventType {
 	return mr.GetStaticType()
 }
-func (mr mouseButtonReleasedEvent) GetName() string {
+func (MouseButtonReleasedEvent) GetName() string {
 	return "MouseButtonReleased"
 }
-func (mr mouseButtonReleasedEvent) GetCategoryFlags() []event.EventCategory {
+func (MouseButtonReleasedEvent) GetCategoryFlags() []event.EventCategory {
 	return getCatFlags()
 }
-func (mr mouseButtonReleasedEvent) ToString() string {
-	return fmt.Sprintf("MouseButtonReleasedEvent: %v", mr.button)
+func (mr MouseButtonReleasedEvent) String() string {
+	return fmt.Sprintf("MouseButtonReleasedEvent| BUTTON(%v)", mr.button)
 }
-func (mr mouseButtonReleasedEvent) IsInCategory(e event.EventCategory) bool {
+func (MouseButtonReleasedEvent) IsInCategory(e event.EventCategory) bool {
 	return inCatCheck(e)
 }

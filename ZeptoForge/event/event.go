@@ -15,6 +15,7 @@ const (
 	AppRender
 	KeyPressed
 	KeyReleased
+	KeyTyped
 	MouseButtonPressed
 	MouseButtonReleased
 	MouseMoved
@@ -32,7 +33,7 @@ type Event interface {
 	GetEventType() EventType
 	GetName() string
 	GetCategoryFlags() []EventCategory
-	ToString() string
+	String() string
 	IsInCategory(EventCategory) bool
 }
 
@@ -46,7 +47,7 @@ type Eventum struct {
 }
 type EventFn struct {
 	Event Event
-	Fn    func(Event) bool
+	Fn    func(Eventum) bool
 }
 
 func NewEventum(ev Event, e EventType) *Eventum {
@@ -61,13 +62,13 @@ func NewEventDispatcher(e *Eventum) eventDispatcher {
 }
 func (ed eventDispatcher) Dispatch(fn EventFn) bool {
 	if ed.event.eventum.GetEventType() == fn.Event.GetEventType() {
-		ed.event.handled = fn.Fn(ed.event.eventum)
+		ed.event.handled = fn.Fn(*ed.event)
 		return true
 	}
 	return false
 }
-func (e *Eventum) ToString() string {
-	return e.eventum.ToString()
+func (e *Eventum) String() string {
+	return e.eventum.String()
 }
 func (e *Eventum) Done() bool {
 	return e.handled
