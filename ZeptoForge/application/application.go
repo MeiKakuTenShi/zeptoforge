@@ -21,7 +21,12 @@ type Application struct {
 func NewApplication(name string) *Application {
 	// TODO: make this platform independent
 	if app_SINGLETON == nil {
-		result := &Application{window: Windows.NewWinWindow(window.NewWindowProps(name, 0, 0)), stack: layerstack.NewLayerStack(), running: true, Name: name}
+		result := new(Application)
+		result.window = Windows.NewWinWindow(window.NewWindowProps(name, 0, 0))
+		result.stack = layerstack.NewLayerStack()
+		result.running = true
+		result.Name = name
+
 		result.window.SetEventCallback(window.EventCallBackFn{CallbackFn: result.OnEvent})
 		app_SINGLETON = result
 	}

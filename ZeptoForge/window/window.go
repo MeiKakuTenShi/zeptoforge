@@ -13,7 +13,12 @@ type WindowProps struct {
 }
 
 func NewWindowProps(title string, width, height int) *WindowProps {
-	return &WindowProps{Title: title, Width: width, Height: height}
+	win := new(WindowProps)
+	win.Title = title
+	win.Width = width
+	win.Height = height
+
+	return win
 }
 
 type EventCallBackFn struct {

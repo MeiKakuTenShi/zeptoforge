@@ -9,9 +9,6 @@ import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/keycodes"
-
-	// This is imported to initialize Windows specific event polling, this may vary pending platform
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/Platform/Windows/winInput"
 )
 
 type Sandbox struct {
@@ -22,8 +19,6 @@ func (sb *Sandbox) Init() {
 	logsys.ZF_INFO("Sandbox Application Initialized")
 	sb.app.PushLayer(layerstack.NewLayem(&ExLayer{}, "ExampleLayer"))
 	sb.app.PushOverlay(layerstack.NewLayem(&imgui.ImGuiLayer{}, "ImGuiLayer"))
-	// Possibly temporary
-	winInput.SetWindowsInput()
 }
 
 func (sb *Sandbox) Run() {

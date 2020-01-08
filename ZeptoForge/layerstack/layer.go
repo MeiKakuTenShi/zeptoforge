@@ -17,7 +17,11 @@ type Layem struct {
 }
 
 func NewLayem(lay Layer, name string) *Layem {
-	return &Layem{Layer: lay, debugName: name}
+	l := new(Layem)
+	l.Layer = lay
+	l.debugName = name
+
+	return l
 }
 
 func (l Layem) GetName() string {

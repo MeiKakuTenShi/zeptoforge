@@ -10,10 +10,7 @@ var getCatFlags = func() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryKeyboard, event.EventCategoryInput}
 }
 var inCatCheck = func(cat event.EventCategory) bool {
-	if cat == event.EventCategoryKeyboard || cat == event.EventCategoryInput {
-		return true
-	}
-	return false
+	return event.Contains(getCatFlags(), cat)
 }
 
 type KeyPressedEvent struct {
@@ -21,12 +18,16 @@ type KeyPressedEvent struct {
 }
 
 func NewKeyPressedEvent(code, count int) *event.Eventum {
-	return event.NewEventum(&KeyPressedEvent{keyCode: code, repeatCount: count}, event.KeyPressed)
+	ev := new(KeyPressedEvent)
+	ev.keyCode = code
+	ev.repeatCount = count
+
+	return event.NewEventum(ev, event.KeyPressed)
 }
-func (kp *KeyPressedEvent) GetKey() int {
+func (kp KeyPressedEvent) GetKey() int {
 	return kp.keyCode
 }
-func (kp *KeyPressedEvent) GetRepeatCount() int {
+func (kp KeyPressedEvent) GetRepeatCount() int {
 	return kp.repeatCount
 }
 func (KeyPressedEvent) GetStaticType() event.EventType {
@@ -53,7 +54,10 @@ type KeyReleasedEvent struct {
 }
 
 func NewKeyReleasedEvent(code int) *event.Eventum {
-	return event.NewEventum(&KeyReleasedEvent{keyCode: code}, event.KeyReleased)
+	ev := new(KeyReleasedEvent)
+	ev.keyCode = code
+
+	return event.NewEventum(ev, event.KeyReleased)
 }
 func (kr *KeyReleasedEvent) GetKey() int {
 	return kr.keyCode
@@ -82,7 +86,10 @@ type KeyTypedEvent struct {
 }
 
 func NewKeyTypedEvent(code rune) *event.Eventum {
-	return event.NewEventum(&KeyTypedEvent{keyCode: code}, event.KeyTyped)
+	ev := new(KeyTypedEvent)
+	ev.keyCode = code
+
+	return event.NewEventum(ev, event.KeyTyped)
 }
 func (kt *KeyTypedEvent) GetKey() rune {
 	return kt.keyCode

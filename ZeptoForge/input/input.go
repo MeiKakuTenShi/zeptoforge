@@ -13,12 +13,15 @@ type inputSingleton struct {
 }
 
 var (
-	instance = &inputSingleton{}
+	instance *inputSingleton
 )
 
 func Singleton(in input) *inputSingleton {
-	if instance.input == nil {
-		instance = &inputSingleton{input: in}
+	if instance == nil {
+		x := new(inputSingleton)
+		x.input = in
+
+		instance = x
 	}
 	return instance
 }

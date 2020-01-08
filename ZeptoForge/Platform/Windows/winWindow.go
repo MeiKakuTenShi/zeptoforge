@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"unsafe"
 
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/Platform/Windows/winInput"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/appEvent"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/keyEvent"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/mouseEvent"
@@ -36,13 +37,13 @@ var (
 )
 
 func NewWinWindow(props *window.WindowProps) window.Window {
-	win := &WinWindow{}
-	result := win.Create(props)
-	return result
+	win := new(WinWindow)
+	win.Create(props)
+	return win
 }
 
 func (win *WinWindow) Create(props *window.WindowProps) window.Window {
-	win.data = &winData{}
+	win.data = new(winData)
 
 	if props.Title == "" {
 		props.Title = default_title
@@ -215,4 +216,6 @@ func (win *WinWindow) init(props *window.WindowProps) {
 		data := *(*winData)(w.GetUserPointer())
 		data.callback.CallbackFn(mouseEvent.NewMouseMovedEvent(xPos, yPos))
 	})
+
+	winInput.SetWindowsInput()
 }

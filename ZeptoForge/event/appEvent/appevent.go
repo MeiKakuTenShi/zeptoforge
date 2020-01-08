@@ -18,7 +18,11 @@ type WindowResizeEvent struct {
 }
 
 func NewWindowResizeEvent(width, height int) *event.Eventum {
-	return event.NewEventum(&WindowResizeEvent{width: width, height: height}, event.WindowResize)
+	ev := new(WindowResizeEvent)
+	ev.width = width
+	ev.height = height
+
+	return event.NewEventum(ev, event.WindowResize)
 }
 func (wr WindowResizeEvent) GetWidth() int {
 	return wr.width
@@ -49,7 +53,7 @@ type WindowCloseEvent struct {
 }
 
 func NewWindowCloseEvent() *event.Eventum {
-	return event.NewEventum(&WindowCloseEvent{}, event.WindowClose)
+	return event.NewEventum(new(WindowCloseEvent), event.WindowClose)
 }
 func (WindowCloseEvent) GetStaticType() event.EventType {
 	return event.WindowClose
@@ -74,7 +78,7 @@ type AppTickEvent struct {
 }
 
 func NewAppTickEvent() *event.Eventum {
-	return event.NewEventum(&AppTickEvent{}, event.AppTick)
+	return event.NewEventum(new(AppTickEvent), event.AppTick)
 }
 func (AppTickEvent) GetStaticType() event.EventType {
 	return event.AppTick
@@ -99,7 +103,7 @@ type AppUpdateEvent struct {
 }
 
 func NewAppUpdateEvent() *event.Eventum {
-	return event.NewEventum(&AppUpdateEvent{}, event.AppUpdate)
+	return event.NewEventum(new(AppUpdateEvent), event.AppUpdate)
 }
 func (AppUpdateEvent) GetStaticType() event.EventType {
 	return event.AppUpdate
@@ -124,7 +128,7 @@ type AppRenderEvent struct {
 }
 
 func NewAppRenderEvent() *event.Eventum {
-	return event.NewEventum(&AppRenderEvent{}, event.AppRender)
+	return event.NewEventum(new(AppRenderEvent), event.AppRender)
 }
 func (AppRenderEvent) GetStaticType() event.EventType {
 	return event.AppRender

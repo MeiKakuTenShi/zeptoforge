@@ -1,7 +1,6 @@
 package winInput
 
 import (
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/application"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/input"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -15,19 +14,22 @@ func SetWindowsInput() {
 }
 
 func (WindowsInput) IsKeyPressedImpl(keycode int) bool {
-	win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
+	win := glfw.GetCurrentContext()
+	// win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
 	state := win.GetKey(glfw.Key(keycode))
 
 	return state == glfw.Press || state == glfw.Repeat
 }
 func (WindowsInput) IsMouseButtonPressedImpl(button int) bool {
-	win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
+	win := glfw.GetCurrentContext()
+	// win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
 	state := win.GetMouseButton(glfw.MouseButton(button))
 
 	return state == glfw.Press
 }
 func (WindowsInput) GetMousePositionImpl() (x, y float32) {
-	win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
+	win := glfw.GetCurrentContext()
+	// win := *(*glfw.Window)(application.GetWindow().GetNativeWindow())
 	xPos, yPos := win.GetCursorPos()
 
 	return float32(xPos), float32(yPos)

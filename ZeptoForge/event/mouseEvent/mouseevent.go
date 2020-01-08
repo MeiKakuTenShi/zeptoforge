@@ -10,7 +10,7 @@ var getCatFlags = func() []event.EventCategory {
 	return []event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}
 }
 var inCatCheck = func(cat event.EventCategory) bool {
-	return event.Contains([]event.EventCategory{event.EventCategoryMouse, event.EventCategoryInput}, cat)
+	return event.Contains(getCatFlags(), cat)
 }
 
 type MouseMovedEvent struct {
@@ -18,7 +18,11 @@ type MouseMovedEvent struct {
 }
 
 func NewMouseMovedEvent(x, y float64) *event.Eventum {
-	return event.NewEventum(&MouseMovedEvent{mouseX: x, mouseY: y}, event.MouseMoved)
+	ev := new(MouseMovedEvent)
+	ev.mouseX = x
+	ev.mouseY = y
+
+	return event.NewEventum(ev, event.MouseMoved)
 }
 func (mm MouseMovedEvent) GetX() float64 {
 	return mm.mouseX
@@ -50,7 +54,11 @@ type MouseScrolledEvent struct {
 }
 
 func NewMouseScrolledEvent(xOff, yOff float64) *event.Eventum {
-	return event.NewEventum(&MouseScrolledEvent{xOffset: xOff, yOffset: yOff}, event.MouseScrolled)
+	ev := new(MouseScrolledEvent)
+	ev.xOffset = xOff
+	ev.yOffset = yOff
+
+	return event.NewEventum(ev, event.MouseScrolled)
 }
 func (ms MouseScrolledEvent) GetXOffset() float64 {
 	return ms.xOffset
@@ -82,7 +90,10 @@ type MouseButtonPressedEvent struct {
 }
 
 func NewMouseButtonPressedEvent(b int) *event.Eventum {
-	return event.NewEventum(&MouseButtonPressedEvent{button: b}, event.MouseButtonPressed)
+	ev := new(MouseButtonPressedEvent)
+	ev.button = b
+
+	return event.NewEventum(ev, event.MouseButtonPressed)
 }
 func (mp MouseButtonPressedEvent) GetButton() int {
 	return mp.button
@@ -111,7 +122,10 @@ type MouseButtonReleasedEvent struct {
 }
 
 func NewMouseButtonReleasedEvent(b int) *event.Eventum {
-	return event.NewEventum(&MouseButtonReleasedEvent{button: b}, event.MouseButtonReleased)
+	ev := new(MouseButtonReleasedEvent)
+	ev.button = b
+
+	return event.NewEventum(ev, event.MouseButtonReleased)
 }
 func (mr MouseButtonReleasedEvent) GetButton() int {
 	return mr.button
