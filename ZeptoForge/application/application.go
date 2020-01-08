@@ -77,6 +77,7 @@ func (app *Application) Run() {
 		for _, v := range app.stack.GetStack() {
 			v.Layer.OnUpdate()
 		}
+
 		app.window.OnUpdate()
 	}
 }

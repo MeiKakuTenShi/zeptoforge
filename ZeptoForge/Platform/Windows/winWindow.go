@@ -79,8 +79,8 @@ func (win *WinWindow) GetWidth() int {
 	w, _ := win.window.GetSize()
 	return w
 }
-func (win *WinWindow) GetWindow() *glfw.Window {
-	return win.window
+func (win *WinWindow) GetNativeWindow() unsafe.Pointer {
+	return unsafe.Pointer(win.window)
 }
 func (win *WinWindow) GetHeight() int {
 	_, h := win.window.GetSize()

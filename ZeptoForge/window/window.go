@@ -1,8 +1,9 @@
 package window
 
 import (
+	"unsafe"
+
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
-	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type WindowProps struct {
@@ -23,7 +24,7 @@ type Window interface {
 	Destruct()
 	OnUpdate()
 	// Getters
-	GetWindow() *glfw.Window
+	GetNativeWindow() unsafe.Pointer
 	GetWidth() int
 	GetHeight() int
 	FramebufferSize() [2]float32

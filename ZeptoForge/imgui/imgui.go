@@ -92,7 +92,7 @@ func (gui *ImGuiLayer) newFrame() {
 	gui.time = currentTime
 
 	// Setup inputs
-	win := application.GetWindow().GetWindow()
+	win := (*glfw.Window)(application.GetWindow().GetNativeWindow())
 
 	for i := 0; i < len(gui.mouseJustPressed); i++ {
 		down := gui.mouseJustPressed[i] || (win.GetMouseButton(glfwButtonIDByIndex[i]) == glfw.Press)
