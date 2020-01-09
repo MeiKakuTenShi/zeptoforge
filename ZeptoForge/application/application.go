@@ -34,6 +34,10 @@ func NewApplication(name string) *Application {
 	return app_SINGLETON
 }
 
+func Get() *Application {
+	return app_SINGLETON
+}
+
 func DisplaySize() [2]float32 {
 	return [2]float32{float32(app_SINGLETON.window.GetWidth()), float32(app_SINGLETON.window.GetHeight())}
 }

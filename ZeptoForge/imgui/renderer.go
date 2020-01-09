@@ -1,13 +1,14 @@
 package imgui
 
 import (
+	"fmt"
 	"unsafe"
 
 	"github.com/go-gl/gl/v4.6-core/gl"
-	imgui "github.com/inkyblackness/imgui-go"
+	"github.com/inkyblackness/imgui-go/v2"
 )
 
-// OpenGL3 implements a renderer based on github.com/go-gl/gl (v4.6-core).
+// OpenGL3 implements a renderer based on github.com/go-gl/gl (v3.2-core).
 type OpenGL3 struct {
 	imguiIO imgui.IO
 
@@ -27,13 +28,18 @@ type OpenGL3 struct {
 
 // NewOpenGL3 attempts to initialize a renderer.
 // An OpenGL context has to be established before calling this function.
-func NewOpenGL3(io imgui.IO) *OpenGL3 {
+func NewOpenGL3(io imgui.IO) (*OpenGL3, error) {
+	err := gl.Init()
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize OpenGL: %v", err)
+	}
+
 	renderer := &OpenGL3{
 		imguiIO:     io,
-		glslVersion: "#version 410",
+		glslVersion: "#version 150",
 	}
 	renderer.createDeviceObjects()
-	return renderer
+	return renderer, nil
 }
 
 // Dispose cleans up the resources.
