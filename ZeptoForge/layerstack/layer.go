@@ -8,6 +8,7 @@ type Layer interface {
 	OnAttach()
 	OnDetach()
 	OnUpdate()
+	OnImGuiRender()
 	OnEvent(*event.Eventum)
 }
 

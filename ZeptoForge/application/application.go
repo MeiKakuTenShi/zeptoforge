@@ -4,6 +4,7 @@ import (
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/Platform/Windows"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event/appEvent"
+	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/imgui/imguiLayer"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/layerstack"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/logsys"
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
@@ -12,29 +13,28 @@ import (
 var app_SINGLETON *Application
 
 type Application struct {
-	window  window.Window
-	stack   layerstack.LayerStack
-	running bool
-	Name    string
+	window     window.Window
+	imguiLayer *imguiLayer.ImGuiLayer
+	stack      layerstack.LayerStack
+	running    bool
+	Name       string
 }
 
 func NewApplication(name string) *Application {
 	// TODO: make this platform independent
 	if app_SINGLETON == nil {
 		result := new(Application)
-		result.window = Windows.NewWinWindow(window.NewWindowProps(name, 0, 0))
+		result.window = Windows.NewWinWindow(&window.WindowProps{Title: name, Width: 0, Height: 0})
+		result.imguiLayer = imguiLayer.NewImGuiLayer(result.window)
 		result.stack = layerstack.NewLayerStack()
 		result.running = true
 		result.Name = name
 
-		result.window.SetEventCallback(window.EventCallBackFn{CallbackFn: result.OnEvent})
+		result.PushOverlay(layerstack.NewLayem(result.imguiLayer, "ImGuiLayer"))
+		result.window.SetEventCallback(result.OnEvent)
 		app_SINGLETON = result
 	}
 
-	return app_SINGLETON
-}
-
-func Get() *Application {
 	return app_SINGLETON
 }
 
@@ -87,6 +87,11 @@ func (app *Application) Run() {
 			v.Layer.OnUpdate()
 		}
 
+		app.imguiLayer.Begin()
+		for _, v := range app.stack.GetStack() {
+			v.Layer.OnImGuiRender()
+		}
+		app.imguiLayer.End()
 		app.window.OnUpdate()
 	}
 }

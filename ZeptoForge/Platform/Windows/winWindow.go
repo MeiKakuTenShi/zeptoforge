@@ -47,18 +47,12 @@ func (win *WinWindow) Create(props *window.WindowProps) window.Window {
 
 	if props.Title == "" {
 		props.Title = default_title
-	} else {
-
 	}
 	if props.Width == 0 {
 		props.Width = default_width
-	} else {
-
 	}
 	if props.Height == 0 {
 		props.Height = default_height
-	} else {
-
 	}
 
 	win.init(props)
@@ -150,15 +144,13 @@ func (win *WinWindow) init(props *window.WindowProps) {
 		data.width = width
 		data.height = height
 
-		e := appEvent.NewWindowResizeEvent(width, height)
-		data.callback.CallbackFn(e)
+		data.callback(appEvent.NewWindowResizeEvent(width, height))
 	})
 
 	win.window.SetCloseCallback(func(w *glfw.Window) {
 		data := *(*winData)(w.GetUserPointer())
 
-		e := appEvent.NewWindowCloseEvent()
-		data.callback.CallbackFn(e)
+		data.callback(appEvent.NewWindowCloseEvent())
 	})
 
 	// Keys
@@ -168,17 +160,17 @@ func (win *WinWindow) init(props *window.WindowProps) {
 		switch action {
 		case glfw.Press:
 			{
-				data.callback.CallbackFn(keyEvent.NewKeyPressedEvent(int(key), 0))
+				data.callback(keyEvent.NewKeyPressedEvent(int(key), 0))
 				break
 			}
 		case glfw.Release:
 			{
-				data.callback.CallbackFn(keyEvent.NewKeyReleasedEvent(int(key)))
+				data.callback(keyEvent.NewKeyReleasedEvent(int(key)))
 				break
 			}
 		case glfw.Repeat:
 			{
-				data.callback.CallbackFn(keyEvent.NewKeyPressedEvent(int(key), 1))
+				data.callback(keyEvent.NewKeyPressedEvent(int(key), 1))
 				break
 			}
 		}
@@ -186,7 +178,7 @@ func (win *WinWindow) init(props *window.WindowProps) {
 
 	win.window.SetCharCallback(func(w *glfw.Window, char rune) {
 		data := *(*winData)(w.GetUserPointer())
-		data.callback.CallbackFn(keyEvent.NewKeyTypedEvent(char))
+		data.callback(keyEvent.NewKeyTypedEvent(char))
 	})
 
 	// Mouse
@@ -196,12 +188,12 @@ func (win *WinWindow) init(props *window.WindowProps) {
 		switch action {
 		case glfw.Press:
 			{
-				data.callback.CallbackFn(mouseEvent.NewMouseButtonPressedEvent(int(button)))
+				data.callback(mouseEvent.NewMouseButtonPressedEvent(int(button)))
 				break
 			}
 		case glfw.Release:
 			{
-				data.callback.CallbackFn(mouseEvent.NewMouseButtonReleasedEvent(int(button)))
+				data.callback(mouseEvent.NewMouseButtonReleasedEvent(int(button)))
 				break
 			}
 		}
@@ -209,12 +201,12 @@ func (win *WinWindow) init(props *window.WindowProps) {
 
 	win.window.SetScrollCallback(func(w *glfw.Window, xOff, yOff float64) {
 		data := *(*winData)(w.GetUserPointer())
-		data.callback.CallbackFn(mouseEvent.NewMouseScrolledEvent(xOff, yOff))
+		data.callback(mouseEvent.NewMouseScrolledEvent(xOff, yOff))
 	})
 
 	win.window.SetCursorPosCallback(func(w *glfw.Window, xPos, yPos float64) {
 		data := *(*winData)(w.GetUserPointer())
-		data.callback.CallbackFn(mouseEvent.NewMouseMovedEvent(xPos, yPos))
+		data.callback(mouseEvent.NewMouseMovedEvent(xPos, yPos))
 	})
 
 	winInput.SetWindowsInput()
