@@ -1,4 +1,4 @@
-package mousecodes
+package zforge
 
 type MouseButton int
 

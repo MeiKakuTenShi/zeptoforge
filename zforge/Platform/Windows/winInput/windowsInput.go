@@ -1,16 +1,10 @@
 package winInput
 
 import (
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/input"
-
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type WindowsInput struct {
-}
-
-func SetWindowsInput() {
-	input.Singleton(&WindowsInput{})
 }
 
 func (WindowsInput) IsKeyPressedImpl(keycode int) bool {

@@ -21,7 +21,7 @@ const (
 	MouseMoved
 	MouseScrolled
 
-	NoneCategory = EventCategory(iota)
+	NoneCategory EventCategory = iota
 	EventCategoryApplication
 	EventCategoryInput
 	EventCategoryKeyboard
@@ -36,36 +36,43 @@ type Event interface {
 	String() string
 	IsInCategory(EventCategory) bool
 }
-
-type EventDispatcher struct {
-	event *Eventum
-}
-type Eventum struct {
-	eventum   Event
-	handled   bool
-	eventType EventType
-}
 type EventFn struct {
 	Event Event
 	Fn    func(Eventum) bool
 }
 
-func NewEventum(ev Event, e EventType) *Eventum {
-	even := new(Eventum)
-	even.eventum = ev
-	even.handled = false
-	even.eventType = e
+type Eventum struct {
+	event     Event
+	handled   bool
+	eventType EventType
+}
 
-	return even
+func newEventum(e Event, et EventType) *Eventum {
+	r := new(Eventum)
+	r.event = e
+	r.handled = false
+	r.eventType = et
+
+	return r
 }
 func (e *Eventum) GetEvent() Event {
-	return e.eventum
+	return e.event
+}
+func (e *Eventum) String() string {
+	return e.event.String()
+}
+func (e *Eventum) Done() bool {
+	return e.handled
+}
+
+type EventDispatcher struct {
+	event *Eventum
 }
 
 func NewEventDispatcher(e *Eventum) *EventDispatcher {
-	dis := new(EventDispatcher)
-	dis.event = e
-	return dis
+	r := new(EventDispatcher)
+	r.event = e
+	return r
 }
 func (ed EventDispatcher) Dispatch(fn EventFn) bool {
 	if ed.event.eventType == fn.Event.GetEventType() {
@@ -74,14 +81,8 @@ func (ed EventDispatcher) Dispatch(fn EventFn) bool {
 	}
 	return false
 }
-func (e *Eventum) String() string {
-	return e.eventum.String()
-}
-func (e *Eventum) Done() bool {
-	return e.handled
-}
 
-var Contains = func(s []EventCategory, e EventCategory) bool {
+func contains(s []EventCategory, e EventCategory) bool {
 	for _, a := range s {
 		if a == e {
 			return true

@@ -1,11 +1,9 @@
-package imguiLayer
+package zforge
 
 import (
-	IG "github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/imgui"
-	"github.com/inkyblackness/imgui-go"
-
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
+	"github.com/MeiKakuTenShi/zeptoforge/zforge/event"
+	IG "github.com/MeiKakuTenShi/zeptoforge/zforge/imgui"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 var (
@@ -16,20 +14,13 @@ type ImGuiLayer struct {
 	imgui *IG.Imgui
 }
 
-func NewImGuiLayer(win window.Window) *ImGuiLayer {
+func NewImGuiLayer(win *glfw.Window) *ImGuiLayer {
 	result := new(ImGuiLayer)
 	result.imgui = IG.NewImgui(win)
 	return result
 }
 
-func (gui *ImGuiLayer) OnAttach() {
-
-}
-
-func (gui *ImGuiLayer) OnDetach() {
-	gui.imgui.Destruct()
-}
-
+//------------------ Wrappers --------------------------
 func (gui *ImGuiLayer) Begin() {
 	gui.imgui.Begin()
 }
@@ -37,20 +28,27 @@ func (gui *ImGuiLayer) End() {
 	gui.imgui.End()
 }
 
-func (gui *ImGuiLayer) OnUpdate() {
+//------------------------------------------------------
 
+//------------------ Layer interface -------------------
+func (gui *ImGuiLayer) OnAttach() {
 }
-
+func (gui *ImGuiLayer) OnDetach() {
+	gui.imgui.Destruct()
+}
+func (gui *ImGuiLayer) OnUpdate() {
+}
 func (gui *ImGuiLayer) OnImGuiRender() {
 	if showDemoWindow {
-		imgui.ShowDemoWindow(&showDemoWindow)
+		gui.imgui.ShowDemo(&showDemoWindow)
 	}
 }
-
 func (gui *ImGuiLayer) OnEvent(e *event.Eventum) {
-
 }
 
+//-----------------------------------------------------
+
+//------------------- Extra ---------------------------
 // ClipboardText returns the current clipboard text, if available.
 func (gui *ImGuiLayer) ClipboardText() string {
 	return gui.imgui.ClipboardText()

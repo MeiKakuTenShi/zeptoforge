@@ -1,12 +1,17 @@
-package layerstack
+package zforge
 
 type LayerStack struct {
 	layers      []*Layem
 	layerInsert int
 }
 
-func NewLayerStack() LayerStack {
-	return LayerStack{layers: []*Layem{}, layerInsert: 0}
+func newLayerStack() *LayerStack {
+	r := new(LayerStack)
+
+	r.layers = []*Layem{}
+	r.layerInsert = 0
+
+	return r
 }
 func (ls *LayerStack) PushLayer(layer *Layem) {
 	ls.layers = append(ls.layers, layer)
@@ -35,7 +40,4 @@ func (ls LayerStack) PopOverlay(overlay *Layem) {
 }
 func (ls *LayerStack) GetStack() []*Layem {
 	return ls.layers
-}
-func (ls LayerStack) Length() int {
-	return len(ls.layers)
 }

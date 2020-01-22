@@ -5,16 +5,13 @@ import (
 
 	imgui "github.com/inkyblackness/imgui-go"
 
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/window"
-
 	// TEMPORARY
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 var (
-	showDemoWindow = true
-	clearColor     = [4]float32{0.0, 0.0, 0.0, 1.0}
+	clearColor = [4]float32{0.0, 0.0, 0.0, 1.0}
 )
 
 type Imgui struct {
@@ -26,7 +23,7 @@ type Imgui struct {
 	mouseJustPressed [3]bool
 }
 
-func NewImgui(window window.Window) *Imgui {
+func NewImgui(window *glfw.Window) *Imgui {
 	result := new(Imgui)
 	result.context = imgui.CreateContext(nil)
 	result.io = imgui.CurrentIO()
@@ -39,7 +36,7 @@ func NewImgui(window window.Window) *Imgui {
 	// result.io.SetConfigFlags(imgui.ConfigFlagViewportsNoMerge) // (Not implemented in imgui-go)
 
 	result.setKeyMapping()
-	result.window = (*glfw.Window)(window.GetNativeWindow())
+	result.window = window
 	result.renderer = &OpenGL3{glslVersion: "#version 410"}
 	result.renderer.createDeviceObjects()
 
@@ -63,6 +60,9 @@ func (gui *Imgui) End() {
 	imgui.Render()
 	gui.renderer.PreRender(clearColor)
 	gui.renderer.Render([2]float32{float32(width), float32(height)}, [2]float32{float32(buffWidth), float32(buffHeight)}, imgui.RenderedDrawData())
+}
+func (gui *Imgui) ShowDemo(v *bool) {
+	imgui.ShowDemoWindow(v)
 }
 
 func (gui *Imgui) newFrame() {

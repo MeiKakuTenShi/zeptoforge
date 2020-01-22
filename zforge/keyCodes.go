@@ -1,4 +1,4 @@
-package keycodes
+package zforge
 
 type Key int
 

@@ -1,8 +1,7 @@
-package logsys
+package zforge
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"log"
 
@@ -81,7 +80,7 @@ var (
 	}
 )
 
-func Init() {
+func initLogSys() {
 	core = bytes.Buffer{}
 	client = bytes.Buffer{}
 
@@ -100,18 +99,4 @@ func PrintLog(rec int) {
 	} else {
 		fmt.Printf("LogSystem::PrintMessage(): 'rec' = %v - value undefined", rec)
 	}
-}
-
-func GetCoreLog() (*log.Logger, error) {
-	if coreLog != nil {
-		return coreLog, nil
-	}
-	return nil, errors.New("coreLog does not exist, check if logsys has been initialized; 'clue': Init()")
-}
-
-func GetClientLog() (*log.Logger, error) {
-	if clientLog != nil {
-		return clientLog, nil
-	}
-	return nil, errors.New("clientLog does not exist, check if logsys has been initialized; 'clue': Init()")
 }

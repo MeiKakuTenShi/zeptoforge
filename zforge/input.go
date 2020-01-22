@@ -1,4 +1,8 @@
-package input
+package zforge
+
+var (
+	inputInstance *inputSingleton
+)
 
 type input interface {
 	IsKeyPressedImpl(int) bool
@@ -12,32 +16,28 @@ type inputSingleton struct {
 	input input
 }
 
-var (
-	instance *inputSingleton
-)
-
-func Singleton(in input) *inputSingleton {
-	if instance == nil {
+func initInputSingleton(in input) *inputSingleton {
+	if inputInstance == nil {
 		x := new(inputSingleton)
 		x.input = in
 
-		instance = x
+		inputInstance = x
 	}
-	return instance
+	return inputInstance
 }
 func IsKeyPressed(keycode int) bool {
-	return instance.input.IsKeyPressedImpl(keycode)
+	return inputInstance.input.IsKeyPressedImpl(keycode)
 }
 func IsMouseButtonPressed(button int) bool {
-	return instance.input.IsMouseButtonPressedImpl(button)
+	return inputInstance.input.IsMouseButtonPressedImpl(button)
 }
 func GetMousePosition() (x, y float32) {
-	xPos, yPos := instance.input.GetMousePositionImpl()
+	xPos, yPos := inputInstance.input.GetMousePositionImpl()
 	return xPos, yPos
 }
 func GetMouseX() float32 {
-	return instance.input.GetMouseXImpl()
+	return inputInstance.input.GetMouseXImpl()
 }
 func GetMouseY() float32 {
-	return instance.input.GetMouseYImpl()
+	return inputInstance.input.GetMouseYImpl()
 }

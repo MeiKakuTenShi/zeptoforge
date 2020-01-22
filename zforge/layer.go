@@ -1,7 +1,7 @@
-package layerstack
+package zforge
 
 import (
-	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/event"
+	"github.com/MeiKakuTenShi/zeptoforge/zforge/event"
 )
 
 type Layer interface {
@@ -13,13 +13,13 @@ type Layer interface {
 }
 
 type Layem struct {
-	Layer     Layer
+	layer     Layer
 	debugName string
 }
 
 func NewLayem(lay Layer, name string) *Layem {
 	l := new(Layem)
-	l.Layer = lay
+	l.layer = lay
 	l.debugName = name
 
 	return l
