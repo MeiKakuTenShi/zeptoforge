@@ -1,5 +1,31 @@
 package zforge
 
+import "github.com/MeiKakuTenShi/zeptoforge/zforge/event"
+
+type Layer interface {
+	OnAttach()
+	OnDetach()
+	OnUpdate()
+	OnImGuiRender()
+	OnEvent(*event.Eventum)
+}
+
+type Layem struct {
+	layer     Layer
+	debugName string
+}
+
+func NewLayem(lay Layer, name string) *Layem {
+	l := new(Layem)
+	l.layer = lay
+	l.debugName = name
+
+	return l
+}
+func (l Layem) GetName() string {
+	return l.debugName
+}
+
 type LayerStack struct {
 	layers      []*Layem
 	layerInsert int
@@ -37,7 +63,4 @@ func (ls LayerStack) PopOverlay(overlay *Layem) {
 			ls.layers = ls.layers[:len(ls.layers)-1]
 		}
 	}
-}
-func (ls *LayerStack) GetStack() []*Layem {
-	return ls.layers
 }

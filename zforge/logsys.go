@@ -25,28 +25,28 @@ var (
 	fatalText = color.New(color.FgRed).SprintFunc()
 
 	// CORE log macros
-	ZF_CORE_ERROR = func(msg ...interface{}) {
+	core_ERROR = func(msg ...interface{}) {
 		coreLog.Panic(fmt.Sprint(errorText("CORE_ERROR"), ": ", basicText(msg)))
 		line, _ := core.ReadString([]byte("\n")[0])
 		fmt.Print(line)
 	}
-	ZF_CORE_WARN = func(msg ...interface{}) {
+	core_WARN = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(warnText("CORE_WARNING"), ": ", basicText(msg)))
 		line, _ := core.ReadString([]byte("\n")[0])
 		fmt.Print(line)
 	}
-	ZF_CORE_INFO = func(msg ...interface{}) {
+	core_INFO = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(infoText("CORE_INFO"), ": ", basicText(msg)))
 		// fmt.Print(&core)
 		line, _ := core.ReadString([]byte("\n")[0])
 		fmt.Print(line)
 	}
-	ZF_CORE_TRACE = func(msg ...interface{}) {
+	core_TRACE = func(msg ...interface{}) {
 		coreLog.Print(fmt.Sprint(traceText("CORE_TRACE"), ": ", basicText(msg)))
 		line, _ := core.ReadString([]byte("\n")[0])
 		fmt.Print(line)
 	}
-	ZF_CORE_FATAL = func(msg ...interface{}) {
+	core_FATAL = func(msg ...interface{}) {
 		coreLog.Fatal(fmt.Sprint(fatalText("CORE_FATAL"), ": ", basicText(msg)))
 		line, _ := core.ReadString([]byte("\n")[0])
 		fmt.Print(line)

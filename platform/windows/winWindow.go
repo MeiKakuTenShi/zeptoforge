@@ -1,11 +1,13 @@
-package Windows
+package windows
 
 import (
+	"fmt"
 	"unsafe"
 
+	"github.com/MeiKakuTenShi/zeptoforge/platform/opengl"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge/event"
+	"github.com/MeiKakuTenShi/zeptoforge/zforge/renderer"
 
-	"github.com/go-gl/gl/v4.6-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
@@ -27,8 +29,9 @@ type WinData struct {
 }
 
 type WinWindow struct {
-	window *glfw.Window
-	data   *WinData
+	window  *glfw.Window
+	data    *WinData
+	context renderer.GraphicsContext
 }
 
 func NewWinWindow(props *WinData) *WinWindow {
@@ -41,10 +44,11 @@ func NewWinWindow(props *WinData) *WinWindow {
 //----------------- Window interface -------------------
 func (win *WinWindow) Destruct() {
 	win.window.Destroy()
+	glfw.Terminate()
 }
 func (win *WinWindow) OnUpdate() {
 	glfw.PollEvents()
-	win.window.SwapBuffers()
+	win.context.SwapBuffers()
 }
 func (win *WinWindow) GetWindow() *glfw.Window {
 	return win.window
@@ -111,14 +115,12 @@ func (win *WinWindow) init(props *WinData) {
 	if err != nil {
 		panic(err)
 	}
-	win.window.MakeContextCurrent()
+
+	win.context = &opengl.OpenGLContext{}
+	fmt.Println(win.context.Init(win.window))
+
 	win.window.SetUserPointer(unsafe.Pointer(win.data))
 	win.SetVSync(true)
-
-	// Initialize OpenGL
-	if err = gl.Init(); err != nil {
-		panic(err)
-	}
 
 	// Set GLFW callbacks
 	// Window

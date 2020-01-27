@@ -58,7 +58,6 @@ func (gui *Imgui) End() {
 	buffWidth, buffHeight := gui.window.GetFramebufferSize()
 
 	imgui.Render()
-	gui.renderer.PreRender(clearColor)
 	gui.renderer.Render([2]float32{float32(width), float32(height)}, [2]float32{float32(buffWidth), float32(buffHeight)}, imgui.RenderedDrawData())
 }
 func (gui *Imgui) ShowDemo(v *bool) {

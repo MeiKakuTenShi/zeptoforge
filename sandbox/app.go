@@ -11,8 +11,8 @@ func CreateApplication() {
 }
 
 func initSB() {
-	zforge.ZF_INFO("Sandbox Application Initialized")
 	zforge.PushLayerOnApp(zforge.NewLayem(&ExLayer{}, "ExampleLayer"))
+	zforge.ZF_INFO("Sandbox Application Initialized")
 }
 
 func Run() {
@@ -20,7 +20,6 @@ func Run() {
 }
 
 func Close() {
-	zforge.CloseApp()
 }
 
 type ExLayer struct {
@@ -36,7 +35,6 @@ func (l ExLayer) OnImGuiRender() {
 }
 
 func (l ExLayer) OnUpdate() {
-	// logsys.ZF_INFO("ExLayer::Update")
 
 	if zforge.IsKeyPressed(int(zforge.ZF_KeyTab)) {
 		zforge.ZF_INFO("Tab key is pressed!")
@@ -44,5 +42,30 @@ func (l ExLayer) OnUpdate() {
 }
 
 func (l ExLayer) OnEvent(e *event.Eventum) {
-	// logsys.ZF_TRACE(e.String())
+	// keyDis := event.NewEventDispatcher(e)
+	// keyDis.Dispatch(event.EventFn{Event: event.MouseMoved, Fn: WhoopsEx})
+}
+
+func WhoopsEx(e event.Eventum) bool {
+	if mme, ok := e.GetEvent().(*event.MouseMovedEvent); ok {
+		xPos := mme.GetX()
+		yPos := mme.GetY()
+
+		switch xPos < 512 {
+		case true:
+			if yPos < 360 {
+				zforge.ZF_INFO("Mouse in quadrant II")
+			} else {
+				zforge.ZF_INFO("Mouse in quadrant III")
+			}
+		case false:
+			if yPos < 360 {
+				zforge.ZF_INFO("Mouse in quadrant I")
+			} else {
+				zforge.ZF_INFO("Mouse in quadrant IV")
+			}
+		}
+	}
+
+	return true
 }

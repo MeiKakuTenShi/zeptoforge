@@ -37,7 +37,7 @@ type Event interface {
 	IsInCategory(EventCategory) bool
 }
 type EventFn struct {
-	Event Event
+	Event EventType
 	Fn    func(Eventum) bool
 }
 
@@ -75,7 +75,7 @@ func NewEventDispatcher(e *Eventum) *EventDispatcher {
 	return r
 }
 func (ed EventDispatcher) Dispatch(fn EventFn) bool {
-	if ed.event.eventType == fn.Event.GetEventType() {
+	if ed.event.eventType == fn.Event {
 		ed.event.handled = fn.Fn(*ed.event)
 		return true
 	}
