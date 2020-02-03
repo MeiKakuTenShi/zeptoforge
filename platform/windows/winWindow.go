@@ -106,7 +106,7 @@ func (win *WinWindow) init(props *WinData) {
 		glfwInitialized = true
 		glfw.WindowHint(glfw.Resizable, glfw.True)
 		glfw.WindowHint(glfw.ContextVersionMajor, 4)
-		glfw.WindowHint(glfw.ContextVersionMinor, 6)
+		glfw.WindowHint(glfw.ContextVersionMinor, 5)
 		glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 		glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.False)
 	}

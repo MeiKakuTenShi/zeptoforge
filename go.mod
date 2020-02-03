@@ -9,4 +9,5 @@ require (
 	github.com/go-gl/glfw v0.0.0-20191125211704-12ad95a8df72
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72
 	github.com/inkyblackness/imgui-go v1.12.0
+	github.com/securego/gosec v0.0.0-20200129084146-17df5b370244 // indirect
 )

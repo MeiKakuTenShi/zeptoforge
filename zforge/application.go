@@ -1,41 +1,48 @@
 package zforge
 
 import (
+	"errors"
 	"fmt"
+	"reflect"
 	"runtime"
 
 	"github.com/MeiKakuTenShi/zeptoforge/ZeptoForge/Platform/Windows/winInput"
 	"github.com/MeiKakuTenShi/zeptoforge/platform/windows"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge/event"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge/renderer"
-	"github.com/go-gl/gl/v4.6-core/gl"
+	"github.com/go-gl/gl/v4.5-core/gl"
 )
 
 var (
-	appInstance *appSingleton
+	appInstance appSingleton
 )
 
 type appSingleton struct {
 	window  Window
 	gui     *ImGuiLayer
 	stack   *LayerStack
-	shader  renderer.Shader
 	running bool
 	Name    string
 
-	vbo renderer.VertexBuffer
-	ibo renderer.IndexBuffer
-	vao uint32
+	shader renderer.Shader
+	vbo    *renderer.VertBuff
+	ibo    *renderer.IndBuff
+	vao    *renderer.VertArray
+
+	shader2    renderer.Shader
+	square_vao *renderer.VertArray
+}
+
+func appInstanceNil() bool {
+	return reflect.DeepEqual(appInstance, appSingleton{})
 }
 
 func InitApp(name string) {
-	if appInstance == nil {
+	if appInstanceNil() {
 		initLogSys()
-		appInstance = &appSingleton{}
-		// Windows specific build
+		// ------- Windows specific build ----------------------------------------------
 		if runtime.GOOS == "windows" {
 			p := &windows.WinData{Title: name, Width: 0, Height: 0}
-
 			appInstance.window = windows.NewWinWindow(p)
 			appInstance.gui = NewImGuiLayer(appInstance.window.GetWindow())
 			initInputSingleton(&winInput.WindowsInput{}) // singleton can only be set once
@@ -43,7 +50,7 @@ func InitApp(name string) {
 			panic("Platform currently not supported")
 		}
 
-		//-----------------------
+		//-------------------------------------------------------------------------------
 		appInstance.stack = newLayerStack()
 		appInstance.running = true
 		appInstance.Name = name
@@ -51,29 +58,79 @@ func InitApp(name string) {
 		PushOverlayOnApp(NewLayem(appInstance.gui, "ImGuiLayer"))
 		appInstance.window.SetEventCallback(AppOnEvent)
 
+		////////////////////////////////////////////////
+		////////////////////////////////////////////////
+		//////////// TESTING TRIANGLES /////////////////
+		///////////////////BEGIN////////////////////////
+		////////////////////////////////////////////////
+
 		shader, err := renderer.NewShader(vertexShader, fragmentShader)
 		if err != nil {
-			core_ERROR(err)
+			core_ERROR("Failed to create Shader Program - ", err)
 		}
 		appInstance.shader = shader
 		appInstance.shader.Bind()
 
-		gl.GenVertexArrays(1, &appInstance.vao)
-		gl.BindVertexArray(appInstance.vao)
+		appInstance.vao, err = renderer.NewVertexArray()
+		if err != nil {
+			core_ERROR("Failed to create Vertex Array - ", err)
+		}
 
-		appInstance.vbo = renderer.CreateVertexBuffer(vertices, len(vertices)*4)
-		appInstance.ibo = renderer.CreateIndexBuffer(indices, len(indices)*4)
+		appInstance.vbo, err = renderer.NewVertexBuffer(vertices, len(vertices)*4)
+		if err != nil {
+			core_ERROR("Failed to create Vertex Buffer - ", err)
+		}
 
-		vertPos := renderer.NewBuffem(renderer.Float3, "a_Position")
-		col := renderer.NewBuffem(renderer.Float4, "a_Color")
-		norm := renderer.NewBuffem(renderer.Float3, "a_Normal")
+		pos := renderer.NewBuffElem(renderer.Float3, "aPosition", false)
+		col := renderer.NewBuffElem(renderer.Float4, "aColor", false)
 
-		layout := renderer.NewBufferLayout(vertPos, col, norm)
-		fmt.Println(layout)
-		// appInstance.vbo.SetLayout(layout)
+		layout := renderer.NewBufferLayout(pos, col)
+		// fmt.Println(layout)
+		appInstance.vbo.SetLayout(layout)
 
-		gl.EnableVertexAttribArray(0)
-		gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, nil)
+		err = appInstance.vao.AddVertexBuffer(*appInstance.vbo)
+		if err != nil {
+			core_INFO(err)
+		}
+
+		appInstance.ibo, err = renderer.NewIndexBuffer(indices, len(indices))
+		if err != nil {
+			core_ERROR("Failed to create Index Buffer - ", err)
+		}
+		appInstance.vao.SetIndexBuffer(*appInstance.ibo)
+
+		appInstance.shader2, err = renderer.NewShader(vertexShader2, fragmentShader2)
+		if err != nil {
+			core_ERROR("Failed to create Shader Program - ", err)
+		}
+
+		appInstance.square_vao, err = renderer.NewVertexArray()
+		if err != nil {
+			core_INFO("Failed to create Vertex Array - ", err)
+		}
+		squareVB, err := renderer.NewVertexBuffer(vertices2, len(vertices2)*4)
+		if err != nil {
+			core_INFO("Failed to create Vertex Buffer - ", err)
+		}
+
+		squareVBlayout := renderer.NewBufferLayout(pos)
+		squareVB.SetLayout(squareVBlayout)
+
+		err = appInstance.square_vao.AddVertexBuffer(*squareVB)
+		if err != nil {
+			core_INFO(err)
+		}
+
+		squareIB, err := renderer.NewIndexBuffer(square_indices, len(square_indices)*4)
+		if err != nil {
+			core_INFO(err)
+		}
+		appInstance.square_vao.SetIndexBuffer(*squareIB)
+		////////////////////////////////////////////////
+		////////////////////////////////////////////////
+		//////////// TESTING TRIANGLES /////////////////
+		////////////////// END /////////////////////////
+		////////////////////////////////////////////////
 
 		core_INFO(fmt.Sprintf("Created App: %s (Width %v, Height %v)", appInstance.Name, appInstance.window.GetWidth(), appInstance.window.GetHeight()))
 	}
@@ -87,12 +144,18 @@ func FrameBufferSize() [2]float32 {
 	return appInstance.window.FramebufferSize()
 }
 
-func GetApplication() appSingleton {
-	return *appInstance
+func GetApplication() (appSingleton, error) {
+	if appInstanceNil() {
+		return appSingleton{}, errors.New("application has not been created")
+	}
+	return appInstance, nil
 }
 
-func GetWindow() Window {
-	return appInstance.window
+func GetWindow() (Window, error) {
+	if appInstanceNil() {
+		return nil, errors.New("cannot obtain window, application is nil")
+	}
+	return appInstance.window, nil
 }
 
 func PushLayerOnApp(l *Layem) {
@@ -126,9 +189,13 @@ func RunApp() {
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		// Render
+		appInstance.shader2.Bind()
+		appInstance.square_vao.Bind()
+		gl.DrawElements(gl.TRIANGLES, appInstance.square_vao.GetIndexBuffer().GetCount(), gl.UNSIGNED_INT, nil)
+
 		appInstance.shader.Bind()
-		gl.BindVertexArray(appInstance.vao)
-		gl.DrawElements(gl.TRIANGLES, int32(appInstance.ibo.GetCount()), gl.UNSIGNED_INT, nil)
+		appInstance.vao.Bind()
+		gl.DrawElements(gl.TRIANGLES, appInstance.ibo.GetCount(), gl.UNSIGNED_INT, nil)
 
 		for _, v := range appInstance.stack.layers {
 			v.layer.OnUpdate()
@@ -139,6 +206,7 @@ func RunApp() {
 			v.layer.OnImGuiRender()
 		}
 		appInstance.gui.End()
+
 		appInstance.window.OnUpdate()
 	}
 }
@@ -149,40 +217,11 @@ func closeApp() {
 
 	appInstance.window.Destruct()
 	appInstance.shader.Unbind()
+	appInstance.ibo.Remove()
+	appInstance.vbo.Remove()
 }
 
 func onWindowClose(e event.Eventum) bool {
 	appInstance.running = false
 	return true
 }
-
-var vertices = []float32{
-	-0.5, -0.5, 0.0,
-	0.5, -0.5, 0.0,
-	0.0, 0.5, 0.0,
-}
-
-var indices = []float32{0, 1, 2}
-
-var vertexShader = `
-#version 330 core
-
-layout(location = 0) in vec3 aPos;
-
-out vec3 vPos;
-
-void main() {
-	vPos = aPos;
-    gl_Position = vec4(aPos, 1);
-}` + "\x00"
-
-var fragmentShader = `
-#version 330 core
-
-layout(location = 0) out vec4 color;
-
-in vec3 vPos;
-
-void main() {
-    color = vec4(vPos * 0.5 + 0.5, 1.0);
-}` + "\x00"
