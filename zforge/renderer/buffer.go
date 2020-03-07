@@ -131,7 +131,7 @@ type VertBuff struct {
 }
 
 func NewVertexBuffer(vertices []float32, size int) (*VertBuff, error) {
-	switch sRendererAPI {
+	switch static_API.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -167,7 +167,7 @@ type IndBuff struct {
 }
 
 func NewIndexBuffer(indices []uint32, count int) (*IndBuff, error) {
-	switch sRendererAPI {
+	switch static_API.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:

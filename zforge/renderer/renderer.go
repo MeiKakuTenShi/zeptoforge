@@ -1,14 +1,38 @@
 package renderer
 
-type RendererAPI uint32
+import "github.com/go-gl/mathgl/mgl32"
 
-const (
-	NoneRenderer RendererAPI = iota
-	OpenGL
-)
-
-func GetAPI() RendererAPI {
-	return sRendererAPI
+func BeginScene(cam OrthoCam) {
+	scene.ViewProjectionMatrix = cam.GetViewProjectionMatrix()
 }
 
-var sRendererAPI = OpenGL
+func EndScene() {
+}
+
+func SetClearColor(color []float32) {
+	static_API.renderer.SetClearColor(color)
+}
+
+func Clear() {
+	static_API.renderer.Clear()
+}
+
+func Submit(va *VertArray, s Shader, mats ...mgl32.Mat4) {
+	s.Bind()
+
+	if len(mats) == 0 {
+		s.UploadUniformMat4("transform", mgl32.Ident4())
+	} else {
+		s.UploadUniformMat4("transform", mats[0])
+	}
+	s.UploadUniformMat4("viewProjection", scene.ViewProjectionMatrix)
+
+	va.Bind()
+	static_API.renderer.DrawIndexed(va.GetIndexBuffer().GetCount())
+}
+
+type sceneData struct {
+	ViewProjectionMatrix mgl32.Mat4
+}
+
+var scene sceneData

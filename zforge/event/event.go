@@ -37,8 +37,9 @@ type Event interface {
 	IsInCategory(EventCategory) bool
 }
 type EventFn struct {
-	Event EventType
-	Fn    func(Eventum) bool
+	Event    EventType
+	Receiver interface{}
+	Fn       func(interface{}, Eventum) bool
 }
 
 type Eventum struct {
@@ -76,7 +77,7 @@ func NewEventDispatcher(e *Eventum) *EventDispatcher {
 }
 func (ed EventDispatcher) Dispatch(fn EventFn) bool {
 	if ed.event.eventType == fn.Event {
-		ed.event.handled = fn.Fn(*ed.event)
+		ed.event.handled = fn.Fn(fn.Receiver, *ed.event)
 		return true
 	}
 	return false

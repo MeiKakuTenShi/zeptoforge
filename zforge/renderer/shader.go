@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/go-gl/gl/v4.5-core/gl"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 type Shader struct {
@@ -94,4 +95,9 @@ func (s Shader) Unbind() {
 
 func (s Shader) GetID() uint32 {
 	return s.rendererID
+}
+
+func (s Shader) UploadUniformMat4(name string, mat mgl32.Mat4) {
+	location := gl.GetUniformLocation(s.rendererID, gl.Str(fmt.Sprint(name, "\x00")))
+	gl.UniformMatrix4fv(location, 1, false, &mat[0])
 }

@@ -5,7 +5,7 @@ import "github.com/MeiKakuTenShi/zeptoforge/zforge/event"
 type Layer interface {
 	OnAttach()
 	OnDetach()
-	OnUpdate()
+	OnUpdate(TimeStep)
 	OnImGuiRender()
 	OnEvent(*event.Eventum)
 }

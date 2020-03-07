@@ -36,7 +36,7 @@ func (gui *ImGuiLayer) OnAttach() {
 func (gui *ImGuiLayer) OnDetach() {
 	gui.imgui.Destruct()
 }
-func (gui *ImGuiLayer) OnUpdate() {
+func (gui *ImGuiLayer) OnUpdate(ts TimeStep) {
 }
 func (gui *ImGuiLayer) OnImGuiRender() {
 	if showDemoWindow {

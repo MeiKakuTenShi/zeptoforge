@@ -13,7 +13,7 @@ import (
 
 const (
 	default_title  = "ZeptoForge Application"
-	default_width  = 1024
+	default_width  = 1280
 	default_height = 720
 )
 

@@ -22,7 +22,7 @@ type VertArray struct {
 }
 
 func NewVertexArray() (*VertArray, error) {
-	switch sRendererAPI {
+	switch static_API.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -31,6 +31,12 @@ func NewVertexArray() (*VertArray, error) {
 		return &VertArray{va: r}, nil
 	default:
 		return &VertArray{}, errors.New("renderer api unknown")
+	}
+}
+func (va *VertArray) Destruct() {
+	va.ib.Remove()
+	for _, v := range va.vbs {
+		v.Remove()
 	}
 }
 func (va *VertArray) Bind() {
@@ -47,7 +53,7 @@ func (va *VertArray) AddVertexBuffer(vb VertBuff) error {
 		return errors.New("vertex buffer has no layout")
 	}
 
-	switch sRendererAPI {
+	switch static_API.api {
 	case NoneRenderer:
 		panic("AddVertexBuffer::RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -72,7 +78,7 @@ func (va *VertArray) AddVertexBuffer(vb VertBuff) error {
 	}
 }
 func (va *VertArray) SetIndexBuffer(ib IndBuff) {
-	switch sRendererAPI {
+	switch static_API.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
