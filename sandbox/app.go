@@ -1,10 +1,12 @@
 package sandbox
 
 import (
+	"github.com/MeiKakuTenShi/zeptoforge/platform/opengl"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge/event"
 	"github.com/MeiKakuTenShi/zeptoforge/zforge/renderer"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/inkyblackness/imgui-go"
 )
 
 func CreateApplication() {
@@ -25,10 +27,10 @@ func Close() {
 }
 
 type ExLayer struct {
-	shader renderer.Shader
+	shader *renderer.ZFshader
 	vao    *renderer.VertArray
 
-	shader2    renderer.Shader
+	shader2    *renderer.ZFshader
 	square_vao *renderer.VertArray
 
 	camera      *renderer.OrthoCam
@@ -40,6 +42,8 @@ type ExLayer struct {
 
 	squarePos   mgl32.Vec3
 	squareSpeed float64
+
+	squareColor [3]float32
 }
 
 func (ex *ExLayer) OnAttach() {
@@ -49,6 +53,8 @@ func (ex *ExLayer) OnAttach() {
 	///////////////////BEGIN////////////////////////
 	////////////////////////////////////////////////
 	var err error
+
+	ex.squareColor = [3]float32{0.2, 0.3, 0.8}
 
 	ex.cameraPos = mgl32.Vec3{0, 0, 0}
 	ex.cameraRotation = 0
@@ -138,7 +144,10 @@ func (l ExLayer) OnDetach() {
 	l.square_vao.Destruct()
 }
 
-func (l ExLayer) OnImGuiRender() {
+func (l *ExLayer) OnImGuiRender() {
+	imgui.Begin("Settings")
+	imgui.SliderFloat3("Square Color", &l.squareColor, 0, 1)
+	imgui.End()
 }
 
 func (l *ExLayer) OnUpdate(ts zforge.TimeStep) {
@@ -184,15 +193,33 @@ func (l *ExLayer) OnUpdate(ts zforge.TimeStep) {
 
 	scale := mgl32.Scale3D(0.1, 0.1, 0.1)
 
-	for x := float32(0); x < 20; x++ {
-		for y := float32(0); y < 20; y++ {
+	// redColor := mgl32.Vec4{0.8, 0.2, 0.3, 1.0}
+	// blueColor := mgl32.Vec4{0.2, 0.3, 0.8, 1.0}
+
+	l.shader2.Bind()
+
+	shader, err := l.shader2.GetShader()
+	if err != nil {
+		zforge.ZF_INFO("Failed to get shader - ", err)
+	}
+
+	glShader, ok := shader.(*opengl.OpenGLShader)
+	if !ok {
+		zforge.ZF_INFO("Failed to assert shader type")
+	}
+	// glShader.Bind()
+	glShader.UploadUniformFloat3("uColor", mgl32.Vec3{l.squareColor[0], l.squareColor[1], l.squareColor[2]})
+
+	for x := float32(0); x < 10; x++ {
+		for y := float32(0); y < 10; y++ {
 			pos := mgl32.Vec3{x * 0.11, y * 0.11, 0}
 			transform := mgl32.Translate3D(pos.Elem()).Mul4(scale)
+
 			renderer.Submit(l.square_vao, l.shader2, transform)
 		}
 	}
 
-	// renderer.Submit(l.vao, l.shader)
+	renderer.Submit(l.vao, l.shader)
 
 	renderer.EndScene()
 }

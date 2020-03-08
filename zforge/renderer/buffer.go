@@ -131,7 +131,7 @@ type VertBuff struct {
 }
 
 func NewVertexBuffer(vertices []float32, size int) (*VertBuff, error) {
-	switch static_API.api {
+	switch sAPI.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -139,7 +139,7 @@ func NewVertexBuffer(vertices []float32, size int) (*VertBuff, error) {
 		r.Init(vertices, size)
 		return &VertBuff{vb: r}, nil
 	default:
-		return &VertBuff{}, errors.New("could not create vertex buffer; unknown api")
+		return nil, errors.New("could not create vertex buffer; unknown api")
 	}
 }
 func (vb *VertBuff) SetLayout(layout BufferLayout) {
@@ -167,7 +167,7 @@ type IndBuff struct {
 }
 
 func NewIndexBuffer(indices []uint32, count int) (*IndBuff, error) {
-	switch static_API.api {
+	switch sAPI.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -175,7 +175,7 @@ func NewIndexBuffer(indices []uint32, count int) (*IndBuff, error) {
 		r.Init(indices, count)
 		return &IndBuff{ib: r}, nil
 	default:
-		return &IndBuff{}, errors.New("could not create index buffer; unkown api")
+		return nil, errors.New("could not create index buffer; unkown api")
 	}
 }
 func (ib IndBuff) GetCount() int32 {

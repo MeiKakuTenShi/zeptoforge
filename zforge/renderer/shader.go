@@ -1,103 +1,46 @@
 package renderer
 
 import (
-	"fmt"
-	"strings"
+	"errors"
 
-	"github.com/go-gl/gl/v4.5-core/gl"
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/MeiKakuTenShi/zeptoforge/platform/opengl"
 )
 
-type Shader struct {
-	rendererID uint32
+type Shader interface {
+	Bind()
+	Unbind()
+	Dispose()
 }
 
-func NewShader(vSrc, fSrc string) (Shader, error) {
-	r := new(Shader)
+type ZFshader struct {
+	shader Shader
+}
 
-	vertexShader, err := compileShader(vSrc, gl.VERTEX_SHADER)
-	if err != nil {
-		return *r, err
+func NewShader(vSrc, fSrc string) (*ZFshader, error) {
+	switch sAPI.api {
+	case NoneRenderer:
+		panic("RendererAPI::None - currently not supported")
+	case OpenGL:
+		r := new(opengl.OpenGLShader)
+		r.Init(vSrc, fSrc)
+		return &ZFshader{shader: r}, nil
+	default:
+		return nil, errors.New("could not create index buffer; unkown api")
+	}
+}
+
+func (s ZFshader) Bind() {
+	s.shader.Bind()
+}
+
+func (s ZFshader) Unbind() {
+	s.shader.Unbind()
+}
+
+func (s ZFshader) GetShader() (Shader, error) {
+	if s.shader != nil {
+		return s.shader, nil
 	}
 
-	fragmentShader, err := compileShader(fSrc, gl.FRAGMENT_SHADER)
-	if err != nil {
-		return *r, err
-	}
-
-	program := gl.CreateProgram()
-
-	gl.AttachShader(program, vertexShader)
-	gl.AttachShader(program, fragmentShader)
-	gl.LinkProgram(program)
-
-	var status int32
-	gl.GetProgramiv(program, gl.LINK_STATUS, &status)
-	if status == gl.FALSE {
-		var logLength int32
-		gl.GetProgramiv(program, gl.INFO_LOG_LENGTH, &logLength)
-
-		log := strings.Repeat("\x00", int(logLength+1))
-		gl.GetProgramInfoLog(program, logLength, nil, gl.Str(log))
-
-		gl.DeleteProgram(program)
-
-		gl.DeleteShader(vertexShader)
-		gl.DeleteShader(fragmentShader)
-
-		return Shader{}, fmt.Errorf("failed to link program: %v", log)
-	}
-
-	gl.DeleteShader(vertexShader)
-	gl.DeleteShader(fragmentShader)
-
-	r.rendererID = program
-
-	return *r, nil
-}
-
-func (s Shader) Dispose() {
-	gl.DeleteProgram(s.rendererID)
-}
-
-func compileShader(source string, shaderType uint32) (uint32, error) {
-	shader := gl.CreateShader(shaderType)
-
-	csources, free := gl.Strs(source)
-	gl.ShaderSource(shader, 1, csources, nil)
-	free()
-	gl.CompileShader(shader)
-
-	var status int32
-	gl.GetShaderiv(shader, gl.COMPILE_STATUS, &status)
-	if status == gl.FALSE {
-		var logLength int32
-		gl.GetShaderiv(shader, gl.INFO_LOG_LENGTH, &logLength)
-
-		log := strings.Repeat("\x00", int(logLength+1))
-		gl.GetShaderInfoLog(shader, logLength, nil, gl.Str(log))
-
-		gl.DeleteShader(shader)
-
-		return 0, fmt.Errorf("failed to compile %v: %v", source, log)
-	}
-
-	return shader, nil
-}
-
-func (s Shader) Bind() {
-	gl.UseProgram(s.rendererID)
-}
-
-func (s Shader) Unbind() {
-	gl.UseProgram(0)
-}
-
-func (s Shader) GetID() uint32 {
-	return s.rendererID
-}
-
-func (s Shader) UploadUniformMat4(name string, mat mgl32.Mat4) {
-	location := gl.GetUniformLocation(s.rendererID, gl.Str(fmt.Sprint(name, "\x00")))
-	gl.UniformMatrix4fv(location, 1, false, &mat[0])
+	return nil, errors.New("shader is empty")
 }

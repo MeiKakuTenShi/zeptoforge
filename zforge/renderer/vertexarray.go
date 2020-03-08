@@ -22,7 +22,7 @@ type VertArray struct {
 }
 
 func NewVertexArray() (*VertArray, error) {
-	switch static_API.api {
+	switch sAPI.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -53,7 +53,7 @@ func (va *VertArray) AddVertexBuffer(vb VertBuff) error {
 		return errors.New("vertex buffer has no layout")
 	}
 
-	switch static_API.api {
+	switch sAPI.api {
 	case NoneRenderer:
 		panic("AddVertexBuffer::RendererAPI::None - currently not supported")
 	case OpenGL:
@@ -78,7 +78,7 @@ func (va *VertArray) AddVertexBuffer(vb VertBuff) error {
 	}
 }
 func (va *VertArray) SetIndexBuffer(ib IndBuff) {
-	switch static_API.api {
+	switch sAPI.api {
 	case NoneRenderer:
 		panic("RendererAPI::None - currently not supported")
 	case OpenGL:

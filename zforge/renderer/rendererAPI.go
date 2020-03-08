@@ -13,20 +13,20 @@ const (
 
 // Will be set dynamically in the future depending on the context
 var (
-	static_API = RendererAPI{api: OpenGL, renderer: opengl.Renderer{}}
+	sAPI = ZFrenderer{api: OpenGL, renderer: opengl.Renderer{}}
 )
 
-type RendAPI interface {
+type Renderer interface {
 	SetClearColor([]float32)
 	Clear()
 	DrawIndexed(int32)
 }
 
-type RendererAPI struct {
+type ZFrenderer struct {
 	api      API
-	renderer RendAPI
+	renderer Renderer
 }
 
 func GetAPI() API {
-	return static_API.api
+	return sAPI.api
 }

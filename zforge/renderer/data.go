@@ -47,16 +47,16 @@ void main() {
 var VertexShader2 = `
 #version 410 core
 
-layout(location = 0) in vec3 a_Position;
+layout(location = 0) in vec3 aPosition;
 
 uniform mat4 viewProjection;
 uniform mat4 transform;
 
-out vec3 v_Position;
+out vec3 vPosition;
 
 void main() {
-	v_Position = a_Position;
-    gl_Position = viewProjection * transform * vec4(a_Position, 1.0);
+	vPosition = aPosition;
+    gl_Position = viewProjection * transform * vec4(aPosition, 1.0);
 }` + "\x00"
 
 var FragmentShader2 = `
@@ -64,8 +64,10 @@ var FragmentShader2 = `
 
 layout(location = 0) out vec4 color;
 
-in vec3 v_Position;
+in vec3 vPosition;
+
+uniform vec3 uColor;
 
 void main() {
-	color = vec4(0.2, 0.3, 0.8, 1.0);
+	color = vec4(uColor, 1.0);
 }` + "\x00"
