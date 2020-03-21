@@ -30,8 +30,10 @@ type ExLayer struct {
 	shader *renderer.ZFshader
 	vao    *renderer.VertArray
 
-	shader2    *renderer.ZFshader
-	square_vao *renderer.VertArray
+	shader2, textureShader *renderer.ZFshader
+	square_vao             *renderer.VertArray
+
+	testTexture, alphaTexture *renderer.Texture2D
 
 	camera      *renderer.OrthoCam
 	cameraPos   mgl32.Vec3
@@ -67,6 +69,7 @@ func (ex *ExLayer) OnAttach() {
 	ex.camera = renderer.NewOrtho2DCamera(-1.6, 1.6, -0.9, 0.9)
 
 	pos := renderer.NewBuffElem(renderer.Float3, "aPosition", false)
+	tex := renderer.NewBuffElem(renderer.Float2, "aTexCoord", false)
 	col := renderer.NewBuffElem(renderer.Float4, "aColor", false)
 
 	// Triangle
@@ -104,7 +107,12 @@ func (ex *ExLayer) OnAttach() {
 
 	ex.shader2, err = renderer.NewShader(renderer.VertexShader2, renderer.FragmentShader2)
 	if err != nil {
-		zforge.ZF_INFO("Failed to create Shader Program - ", err)
+		zforge.ZF_INFO("Failed to create Shader - ", err)
+	}
+
+	ex.textureShader, err = renderer.NewShader(renderer.TextureShaderVert, renderer.TextureShaderFrag)
+	if err != nil {
+		zforge.ZF_INFO("Failed to create Shader - ", err)
 	}
 
 	ex.square_vao, err = renderer.NewVertexArray()
@@ -116,7 +124,7 @@ func (ex *ExLayer) OnAttach() {
 		zforge.ZF_INFO("Failed to create Vertex Buffer - ", err)
 	}
 
-	squareVBlayout := renderer.NewBufferLayout(pos)
+	squareVBlayout := renderer.NewBufferLayout(pos, tex)
 	squareVB.SetLayout(squareVBlayout)
 
 	err = ex.square_vao.AddVertexBuffer(*squareVB)
@@ -129,6 +137,25 @@ func (ex *ExLayer) OnAttach() {
 		zforge.ZF_INFO(err)
 	}
 	ex.square_vao.SetIndexBuffer(*squareIB)
+
+	ex.testTexture, err = renderer.NewTexture2D("test.png")
+	if err != nil {
+		zforge.ZF_INFO("Failed to create texture - ", err)
+	}
+
+	ex.textureShader.Bind()
+
+	shader, err := ex.textureShader.GetShader()
+	if err != nil {
+		zforge.ZF_INFO("Failed to get shader - ", err)
+	}
+
+	glShader, ok := shader.(*opengl.OpenGLShader)
+	if !ok {
+		zforge.ZF_INFO("Failed to assert shader type")
+	}
+
+	glShader.UploadUniformInt("uTexture", 0)
 	////////////////////////////////////////////////
 	////////////////////////////////////////////////
 	//////////// TESTING TRIANGLES /////////////////
@@ -207,7 +234,7 @@ func (l *ExLayer) OnUpdate(ts zforge.TimeStep) {
 	if !ok {
 		zforge.ZF_INFO("Failed to assert shader type")
 	}
-	// glShader.Bind()
+
 	glShader.UploadUniformFloat3("uColor", mgl32.Vec3{l.squareColor[0], l.squareColor[1], l.squareColor[2]})
 
 	for x := float32(0); x < 10; x++ {
@@ -218,8 +245,10 @@ func (l *ExLayer) OnUpdate(ts zforge.TimeStep) {
 			renderer.Submit(l.square_vao, l.shader2, transform)
 		}
 	}
+	l.testTexture.Bind()
+	renderer.Submit(l.square_vao, l.textureShader, mgl32.Diag4(mgl32.Vec4{1.5, 1.5, 1.5, 1}))
 
-	renderer.Submit(l.vao, l.shader)
+	// renderer.Submit(l.vao, l.shader)
 
 	renderer.EndScene()
 }
